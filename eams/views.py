@@ -3,9 +3,9 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 # forms
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course
 
 # Create your views here.
 def index(request):
@@ -158,3 +158,23 @@ def semester(request):
             'semesters': Semester.objects.all()
         }
     return render(request, 'semester/semester.html', context)
+
+# course
+def course(request):
+    if request.method == "POST":
+        form = FormCourse(request.POST or None)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.INFO, "Success, New Course Added Successfully")
+            return render(request, 'course/course.html')
+        else:
+            messages.add_message(request, messages.INFO, "Something went wrong, Please try again.")
+            return render(request, 'course/course.html')
+    else:
+        form = FormCourse()
+        context = {
+            'form':form,
+            'semesters': Semester.objects.all(),
+            'courses': Course.objects.all()
+        }
+    return render(request, 'course/course.html', context)
