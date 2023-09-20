@@ -1,0 +1,32 @@
+<!-- education_level_modal -->
+<div class="modal fade" id="education_level_modal" tabindex="-1" role="dialog" aria-labelledby="education_level_modal" aria-hidden="true">
+    <div class="modal-dialog modal- modal-dialog-centered modal- modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header bg-modal text-white">
+                <h6 class="modal-title" id="modal-title-default">Fill Form Below To Register Level(s) Of Education</h6>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" name="name" id="name" placeholder="Enter Level name" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="submit" value="Register Level" class="primary form-control">
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn primary ml-auto" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of modal -->

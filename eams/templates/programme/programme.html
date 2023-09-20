@@ -1,0 +1,75 @@
+{%load static %}
+{% include 'layout/layout.html' %}
+<!-- unit data -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="m-0 font-weight-bold">Programmes</h6>
+            </div>
+            <div class="col-md-6">
+                <a href="javaScript:void" data-toggle="modal" data-target="#programme_modal" class="btn primary float-right">Add Programme <i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+    {% include 'resource/messages.html' %}
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Name</th>
+                        <th>Abbreviation</th>
+                        <th>Department</th>
+                        <th>Total Year</th>
+                        <th>Date Created</th>
+                        <th>Date Updated</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Name</th>
+                        <th>Abbreviation</th>
+                        <th>Department</th>
+                        <th>Total Year</th>
+                        <th>Date Created</th>
+                        <th>Date Updated</th>
+                        <th>Action</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for programme in programmes %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{programme.name}}</td>
+                            <td>{{programme.programme_abbrevation}}</td>
+                            <td>{{programme.department}}</td>
+                            <td>{{programme.year_of_study_id}}</td>
+                            <td>{{programme.created_at}}</td>
+                            <td>{{programme.created_at}}</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <i class="fa fa-eye text-primary"></i>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <i class="fa fa-edit text-primary"></i>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'modal/programme_modal.html' %}
+{% include 'layout/footer1.html' %}

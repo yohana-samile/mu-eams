@@ -1,0 +1,56 @@
+            {% load static %}
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <span> <a href="https://site.mzumbe.ac.tz" target="_blank" style="color: #f36140; font-weight: 700;">Mzumbe University</a> &copy; 2023</span>
+                            </div>
+                            <div class="col-md-6">
+                                <span> <a href="https://samile.co.tz" target="_blank" style="color: black">Developed By <span style="color:  #f36140;font-weight: 700;"> Samile Developer</span></a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+            </div>
+            <!-- End of Content Wrapper -->
+
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <script>
+            function hideMessage() {
+                var message_el = document.getElementById("message");
+                if (message_el) {
+                    setTimeout(function () {
+                        message_el.style.display = "none";
+                    }, 3000);
+                }
+            }
+            window.onload = hideMessage;
+        </script>
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="{% static '/vendor/jquery/jquery.min.js' %}"></script>
+        <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+        <!-- Page level plugins -->
+        <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+        <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+    </body>
+
+</html>

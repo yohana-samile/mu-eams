@@ -1,0 +1,100 @@
+{% load static %}
+{% include "resource/header.html" %}
+    <body class="bg-default g-sidenav-show g-sidenav-pinned">
+        <div class="main-content my-4">
+            <section class="section section-shaped section-lg">
+                <div class="container py-7 py-lg-8 pt-lg-8">
+                    <div class="row justify-content-center">
+                        
+                        <div class="col-lg-5 col-md-5">
+                            <div class="col-md-12">
+                                <h1 class="display-4 d-none d-md-block text-white">MU-EAMS</h1>
+                                <div class="d-sm-none text-center">
+                                    <h1 class="display-4  text-white">MU-EAMS</h1>
+                                    <p class="lead-small text-sm  text-white">Mzumbe University Exams Attendace Management System</p>
+                                </div>
+        
+                                <div class="d-none d-md-block">
+                                    <p class="lead-small  text-white">Mzumbe University Exams Attendace Management System
+                                        (MU-EAMS) is
+                                        a web
+                                        based application which, among others, it keeps records of University Exams attendence at Mzumbe University by 
+                                        student's
+                                    </p>
+                                    <div class="d-flex px-3">
+                                        <div>
+                                            <div class="icon icon-sm icon-shape bg-gradient-white shadow rounded-circle text-primary">
+                                                <i class="ni ni-bulb-61 text-mzumbe"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="lead-small text-white mt-3">
+                                        * By login into this system you accept its
+                                        <a href="#" data-toggle="modal" data-target="#modal-terms">terms and
+                                            conditions</a> of use. Mzumbe University retains
+                                        the right to use the data provided in the system for any lawful purpose within the
+                                        objectives of
+                                        establishment of the University and for any such other purpose if required by the law in
+                                        force
+                                        in the United Republic of Tanzania.
+                                    </p>
+                                </div>
+        
+                            </div>
+                        </div>
+                        <div class="col-lg-5 col-md-7">
+                            <div class="col-md-12">
+                                <div class="card shadow border-0">
+                                    <div class="card-header bg-white pb-2">
+        
+                                        <div class="row justify-content-center mu_logo">  
+                                            <div class="text-muted mb-3 navbar-brand">
+                                                <img class="mx-auto d-block" src="{% static '/img/favicon.png' %}" alt="mu-logo">
+                                            </div>
+                                        </div>
+        
+                                    </div>
+                                    <div class="card-body px-lg-5 py-lg-5">
+                                        <div class="text-center text-muted mb-4">
+                                            <small>Sign in with credentials</small>
+                                        </div>
+                                        <form action="" method="POST" autocomplete="off" role="form">                                        
+                                            <div class="form-group mb-3">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                    </div>
+                                                    <input type="text" name="username" class="form-control" placeholder="Username" maxlength="200" required="" id="id_username">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="input-group input-group-alternative">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fa fa-unlock"></i></span>
+                                                    </div>
+                                                    <input type="password" name="password" class="form-control" placeholder="Password" maxlength="200" required="" id="id_password">
+                                                </div>
+                                            </div>
+        
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-block primary my-4">Sign in</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12 text-center">        
+                                        <a href="{% url 'forgot_password' %}" class="text-light">
+                                            <small>Forgot password?</small>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    
+{% include "resource/footer.html" %}
