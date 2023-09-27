@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'django_forms_bootstrap',
     # 'eams',
 ]
 
@@ -147,5 +149,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MESSAGE_TAGS = {
     messages.INFO: "",
+    messages.ERROR: "alert-danger",
     50: "critical",
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# AUTH_USER_MODEL = 'student.User'

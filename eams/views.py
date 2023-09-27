@@ -3,9 +3,10 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 # forms
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student
+
 
 # Create your views here.
 def index(request):
@@ -30,9 +31,6 @@ def layout(request):
 
 def home(request):
     return render(request, 'home.html')
-
-def student(request):
-    return render(request, "user/student.html")
 
 # staff data
 def staff(request):
@@ -106,7 +104,7 @@ def programme(request):
             messages.add_message(request, messages.INFO, "Success: Programme Added Successfully")
             return render(request, "programme/programme.html")
         else:
-            messages.error(request, "Somethong went wrong, please try again")
+            messages.add_message(request, messages.ERROR, "Somethong went wrong, please try again")
             return render(request, 'programme/programme.html')
     else:
         form = FormProgramme()
@@ -128,7 +126,7 @@ def education_level(request):
             messages.add_message(request, messages.INFO, "Success, New Education Level Added")
             return render(request, "education_level/education_level.html")
         else:
-            messages.add_message(request, messages.INFO, "Something went wrong, Please try again.")
+            messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
             return render(request, 'education_level/education_level.html')
         
     else:
@@ -149,7 +147,7 @@ def semester(request):
             messages.add_message(request, messages.INFO, "Success, Semester Added")
             return render(request, 'semester/semester.html')
         else:
-            messages.add_message(request, messages.INFO, "Something went wrong, Please try again.")
+            messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
             return render(request, 'semester/semester.html')
     else:
         form = FormSemester()
@@ -168,7 +166,7 @@ def course(request):
             messages.add_message(request, messages.INFO, "Success, New Course Added Successfully")
             return render(request, 'course/course.html')
         else:
-            messages.add_message(request, messages.INFO, "Something went wrong, Please try again.")
+            messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
             return render(request, 'course/course.html')
     else:
         form = FormCourse()
@@ -178,3 +176,36 @@ def course(request):
             'courses': Course.objects.all()
         }
     return render(request, 'course/course.html', context)
+
+
+# student
+def student(request):
+    if request.method == "POST":
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            # get_form = form.save(commit=False)
+            # get_dept = Department.objects.get(id=int(request.POST['department']))
+            # get_form.depertment = get_dept
+            # get_form.save()
+            form.save()
+
+            messages.add_message(request, messages.INFO, "Success, New Student Registred Successfully")
+            return redirect('student')
+            # render(request, 'user/student.html')
+        else:
+            # print(request.POST['department'])
+            messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
+            # print(form.errors)
+            return redirect('student')
+            # render(request, 'user/student.html')
+ 
+    form = StudentForm()
+
+    context = {
+        'form':form,
+        'all_dep': Department.objects.all(),
+        'all_prog': Programme.objects.all(),
+        'students': Student.objects.all(),
+    }
+
+    return render(request, 'user/student.html', context)

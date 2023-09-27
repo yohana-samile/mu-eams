@@ -94,6 +94,21 @@
                     <i class="fas fa-fw fa-book-open"></i>
                     <span>Student Guide</span></a>
             </li>
+            <!-- USERS -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
+                    aria-expanded="true" aria-controls="collapseUsers">
+                    <i class="fas fa-fw fa-user"></i>
+                    <span>User Records</span>
+                </a>
+                <div id="collapseUsers" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="collapse-inner rounded" style="background-color: #002E3B;">
+                        <a class="collapse-item text-white" href="{% url 'student' %}">Student</a>
+                        <a class="collapse-item text-white" href="{% url 'staff' %}">Staff</a>
+                    </div>
+                </div>
+            </li>
                 
             <!-- Nav Item - Mu Units -->
             <li class="nav-item">
@@ -108,22 +123,6 @@
                         <a class="collapse-item text-white" href="{% url 'depertment' %}">Depertment</a>
                         <a class="collapse-item text-white" href="{% url 'unit' %}">Unit</a>
                         <a class="collapse-item text-white" href="{% url 'programme' %}">Programmes</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- USERS -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
-                    aria-expanded="true" aria-controls="collapseUsers">
-                    <i class="fas fa-fw fa-user"></i>
-                    <span>User Records</span>
-                </a>
-                <div id="collapseUsers" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="collapse-inner rounded" style="background-color: #002E3B;">
-                        <a class="collapse-item text-white" href="{% url 'student' %}">Student</a>
-                        <a class="collapse-item text-white" href="{% url 'staff' %}">Staff</a>
                     </div>
                 </div>
             </li>
