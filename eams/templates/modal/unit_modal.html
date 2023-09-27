@@ -19,14 +19,6 @@
                     <div class="form-group">
                         <input type="text" name="unit_abbreviation" id="unit_abbreviation" placeholder="Enter unit abbreviation name" class="form-control" required>
                     </div>
-                    <div class="form-group">
-                        <select name="department" id="department_id" class="select2 form-control">
-                            <option selected disabled hidden>Choose Depertment Belong</option>
-                            {% for result in dep %}
-                                <option value="{{ result.id }}">{{ result.department_abbreviation }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
                     
                     <div class="form-group">
                         <input type="submit" value="Register Unit" class="primary form-control">

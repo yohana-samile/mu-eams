@@ -3,33 +3,32 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Department(models.Model):
-    name = models.CharField(max_length=200)
-    department_abbreviation = models.CharField(max_length=200)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    class Meta:
-        db_table = "department"
-
-    def __str__(self):
-        return self.name
-    # END OF DEPERMENT MODEL
 
 class Unit(models.Model):
     name = models.CharField(max_length=200)
     unit_abbreviation = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-
 
     def ___str__(self):
         return self.unit_abbreviation
-
     class Meta:
         db_table = "unit"
     # END OF UNITS MODEL
+
+class Department(models.Model):
+    name = models.CharField(max_length=200)
+    department_abbreviation = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return self.department_abbreviation
+    class Meta:
+        db_table = "department"
+    # END OF DEPERMENT MODEL
 
 
 class Year_of_study(models.Model):
@@ -44,7 +43,6 @@ class Year_of_study(models.Model):
         db_table = "year_of_study"
     # END OF Year_of_study MODEL
 
-
 class Programme(models.Model):
     name = models.CharField(max_length=200)
     programme_abbrevation = models.CharField(max_length=200)
@@ -54,7 +52,7 @@ class Programme(models.Model):
     year_of_study = models.ForeignKey(Year_of_study, on_delete=models.CASCADE)
 
     def ___str__(self):
-        return self.programme_abbrevation
+        return f"{self.name} {self.programme_abbrevation}"
 
     class Meta:
         db_table = "programme"
@@ -65,6 +63,9 @@ class Education_level(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         db_table = "education_level"
     # END OF EDUCATION_LEVEL MODEL
@@ -73,6 +74,9 @@ class Semester(models.Model):
     name = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         db_table = "semester"
@@ -85,6 +89,8 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
+    def __str__(self):
+        return self.name
     class Meta:
         db_table = "course"
     # END OF COURSE MODEL
@@ -103,6 +109,9 @@ class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.amount
 
     class Meta:
         db_table = "payment"
@@ -187,7 +196,7 @@ class Student(AbstractBaseUser):
     cell_phone = models.CharField(max_length=20, null=True)
     reg_number = models.CharField(max_length=20, null=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICE, default='male')
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, default=default_depertment)
+    # department = models.ForeignKey(Department, on_delete=models.CASCADE, default=default_depertment)
     programme = models.ForeignKey(Programme, on_delete=models.CASCADE, default=default_programme)
     is_staff = models.BooleanField(default=False)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics/', null=True)

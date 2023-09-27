@@ -1,20 +1,19 @@
 from django import forms
-from .models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student
-
-
-# Department
-class FormDepertment(forms.ModelForm):
-    class Meta:
-        model = Department
-        fields = ['name', 'department_abbreviation']
+from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student
 
 # unit
 class FormUnit(forms.ModelForm):
     class Meta:
         model = Unit
-        fields = ['name', 'unit_abbreviation', 'department']
+        fields = ['name', 'unit_abbreviation']
 
-#year
+# Department
+class FormDepertment(forms.ModelForm):
+    class Meta:
+        model = Department
+        fields = ['name', 'department_abbreviation', 'unit']
+
+# Year
 class FormYearOFStudy(forms.ModelForm):
     class Meta:
         model = Year_of_study
@@ -48,4 +47,4 @@ class FormCourse(forms.ModelForm):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['first_name', 'last_name', 'middle_name', 'birth_date', 'cell_phone', 'reg_number', 'gender', 'department', 'programme', 'email']
+        fields = ['password', 'first_name', 'last_name', 'middle_name', 'birth_date', 'cell_phone', 'reg_number', 'gender', 'programme', 'email']

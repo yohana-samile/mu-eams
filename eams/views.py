@@ -36,26 +36,6 @@ def home(request):
 def staff(request):
     return render(request, 'user/staff.html')
 
-# depertment
-def depertment(request):
-    if request.method == 'POST':
-        form = FormDepertment(request.POST or None)
-        if form.is_valid():
-            form.save()
-
-            messages.add_message(request, messages.INFO, "Success: Depertment Added Successfully")
-            return render(request, 'depertment/depertment.html')
-
-        else:
-            messages.error(request, "Something Went Wrong Try Again")
-            return render(request, 'depertment/depertment.html')
-
-    else:
-        form = FormDepertment()    
-        all_depertment = Department.objects.all()
-        context = { 'depertments':all_depertment }
-    return render(request, 'depertment/depertment.html', context)
-
 # units
 def unit(request):
     if request.method == "POST":
@@ -64,17 +44,41 @@ def unit(request):
             form.save()
 
             messages.add_message(request, messages.INFO, "Success: Unit Added Successfully")
-            return render(request, 'unit/unit.html')
+            return redirect('unit')
         else:
             messages.error(request, "Somethong went wrong, please try again")
-            return render(request, 'unit/unit.html')
+            return redirect('unit')
     else:
         form = FormUnit()
         all_unit = Unit.objects.all()
-        all_dep = Department.objects.all()
-
-        data = { 'units':all_unit, 'dep':all_dep }
+        data = { 
+           'units':all_unit
+        }
     return render(request, 'unit/unit.html', data)
+
+
+# depertment
+def depertment(request):
+    if request.method == 'POST':
+        formOfDep = FormDepertment(request.POST or None)
+        if formOfDep.is_valid():
+            formOfDep.save()
+            messages.add_message(request, messages.INFO, "Success: Depertment Added Successfully")
+            return redirect('depertment')
+
+        else:
+            messages.error(request, "Something Went Wrong Try Again")
+            return redirect('depertment')
+
+    # else:
+    formOfDep = FormDepertment()    
+    all_dep = Department.objects.all()
+    all_unit = Unit.objects.all()
+    context = {
+        'depertments': all_dep,
+        'units':all_unit,
+    }
+    return render(request, 'depertment/depertment.html', context)
 
 # year_of_study
 def year_of_study(request):
@@ -84,10 +88,10 @@ def year_of_study(request):
             form.save()
 
             messages.add_message(request, messages.INFO, "Success: Year Added Successfully")
-            return render(request, "year_of_study/year_of_study.html")
+            return redirect('year_of_study')
         else:
             messages.error(request, "Somethong went wrong, please try again")
-            return render(request, 'year_of_study/year_of_study.html')
+            return redirect('year_of_study')
     else:
         form = FormYearOFStudy()
         all_year = Year_of_study.objects.all()
@@ -102,10 +106,10 @@ def programme(request):
             form.save()
 
             messages.add_message(request, messages.INFO, "Success: Programme Added Successfully")
-            return render(request, "programme/programme.html")
+            return redirect('programme')
         else:
             messages.add_message(request, messages.ERROR, "Somethong went wrong, please try again")
-            return render(request, 'programme/programme.html')
+            return redirect('programme')
     else:
         form = FormProgramme()
         context = {
@@ -124,10 +128,10 @@ def education_level(request):
             form.save()
 
             messages.add_message(request, messages.INFO, "Success, New Education Level Added")
-            return render(request, "education_level/education_level.html")
+            return redirect('education_level')
         else:
             messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
-            return render(request, 'education_level/education_level.html')
+            return redirect('education_level')
         
     else:
         form = FormEducationLevel()
@@ -145,10 +149,10 @@ def semester(request):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.INFO, "Success, Semester Added")
-            return render(request, 'semester/semester.html')
+            return redirect('semester')
         else:
             messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
-            return render(request, 'semester/semester.html')
+            return redirect('semester')
     else:
         form = FormSemester()
         context = {
@@ -164,10 +168,10 @@ def course(request):
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.INFO, "Success, New Course Added Successfully")
-            return render(request, 'course/course.html')
+            return redirect('course')
         else:
             messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
-            return render(request, 'course/course.html')
+            return redirect('course')
     else:
         form = FormCourse()
         context = {
@@ -191,16 +195,13 @@ def student(request):
 
             messages.add_message(request, messages.INFO, "Success, New Student Registred Successfully")
             return redirect('student')
-            # render(request, 'user/student.html')
         else:
             # print(request.POST['department'])
             messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
             # print(form.errors)
             return redirect('student')
-            # render(request, 'user/student.html')
- 
+    
     form = StudentForm()
-
     context = {
         'form':form,
         'all_dep': Department.objects.all(),

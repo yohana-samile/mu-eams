@@ -17,28 +17,45 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
+                        <th>First Name</th>
+                        <th>Sur Name</th>
+                        <th>Email</th>
+                        <th>Regstration Number</th>
+                        <th>Unit</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Age</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
+                        <th>First Name</th>
+                        <th>Sur Name</th>
+                        <th>Email</th>
+                        <th>Regstration Number</th>
+                        <th>Unit</th>
+                        <th>Action</th>
                     </tr>
                 </tfoot>
                 <tbody>
                     {% for student in students %}
                         <tr>
-                            <td>{{ student.cell_phone }}</td>
+                            <td>{{ student.first_name }}</td>
+                            <td>{{ student.last_name }}</td>
+                            <td>{{ student.email }}</td>
+                            <td>{{ student.reg_number }}</td>
+                            <td>{{ student.department }}</td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <i class="fa fa-eye text-primary"></i>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <i class="fa fa-edit text-primary"></i>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <i class="fa fa-trash text-danger"></i>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
