@@ -32,23 +32,6 @@
                 }
             }
             window.onload = hideMessage;
-
-            // form_registration
-            document.addEventListener("DOMContentLoaded", function () {
-                var form = document.getElementById("form_registration");
-                form.addEventListener("submit", function (event) {
-                    event.preventDefault();
-
-                    var cell_phn = document.querySelector("#cell_number").value;
-                    if (cell_phn === "") {
-                        console.log("Cell number is empty." + cell_phn);
-                    } else{
-                        console.log("not empt" + cell_phn);
-                        form.submit();
-                    }
-                });
-            });
-
         </script>
 
         <!-- Scroll to Top Button-->

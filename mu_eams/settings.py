@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
     'django_forms_bootstrap',
     # 'eams',
 ]
@@ -152,7 +151,5 @@ MESSAGE_TAGS = {
     messages.ERROR: "alert-danger",
     50: "critical",
 }
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # AUTH_USER_MODEL = 'student.User'
