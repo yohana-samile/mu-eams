@@ -152,4 +152,6 @@ MESSAGE_TAGS = {
     50: "critical",
 }
 
-# AUTH_USER_MODEL = 'student.User'
+
+AUTHENTICATION_BACKENDS = ['eams.backends.UserStudentAuthBackend']
+LOGIN_URL = 'login'

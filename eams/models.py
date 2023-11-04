@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import User
+from django.contrib.auth.models import PermissionsMixin
 
 # Create your models here.
 
@@ -11,7 +11,7 @@ class Unit(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def ___str__(self):
-        return self.unit_abbreviation
+        return self.name
     class Meta:
         db_table = "unit"
     # END OF UNITS MODEL
@@ -52,7 +52,8 @@ class Programme(models.Model):
     year_of_study = models.ForeignKey(Year_of_study, on_delete=models.CASCADE)
 
     def ___str__(self):
-        return f"{self.name} {self.programme_abbrevation}"
+        return self.name
+        # return f"{self.name} {self.programme_abbrevation}"
 
     class Meta:
         db_table = "programme"
@@ -103,53 +104,6 @@ class Course_programme(models.Model):
         db_table = "course_programme"
     # END OF Course_programme MODEL
 
-class Payment(models.Model):
-    amount = models.IntegerField()
-    status = models.BooleanField(default=0)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    def __str__(self):
-        return self.amount
-
-    class Meta:
-        db_table = "payment"
-    # END OF Payment MODEL
-
-class Biometric_data(models.Model):
-    fingerprint = models.CharField(max_length=500)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    class Meta:
-        db_table = "biometric_data"
-    # END OF Biometric_data MODEL
-
-
-class Exam_attendace(models.Model):
-    EXAM_TYPES = (
-        ('ue', 'University Exam'),
-        ('se', 'Supplementary Exam'),
-        ('t1', 'Test One'),
-        ('t2', 'Test Two'),
-    )
-    type_of_exam = models.CharField(max_length=2, choices=EXAM_TYPES, default='ue')
-    booklet_number = models.CharField(max_length=100)
-    exam_start_time = models.TimeField
-    exam_end_time = models.TimeField
-    signin_fingerprint = models.BinaryField()
-    signout_fingerprint = models.BinaryField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-
-    class Meta:
-        db_table ="exam_attendace"
-
-    def __str__(self):
-        return f"{self.user.username}'s {self.get_type_of_exam_display()} Exam Attendance"
 
 # user
 class CustomStudentUser(BaseUserManager):
@@ -173,7 +127,7 @@ class CustomStudentUser(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
             
 # class Student(models.Model):
-class Student(AbstractBaseUser):
+class Student(AbstractBaseUser, PermissionsMixin):
     def default_depertment():
         try:
             return Department.objects.get(pk=1)
@@ -188,6 +142,7 @@ class Student(AbstractBaseUser):
         ('male', 'Male'),
         ('female', 'Female'),
     )
+    
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -202,6 +157,11 @@ class Student(AbstractBaseUser):
     image = models.ImageField(default='default.jpg', upload_to='profile_pics/', null=True)
     date_joined = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+    is_active = models.BooleanField(default= True)
+    is_staff = models.BooleanField(default= False)
+    is_superuser = models.BooleanField(default= False)
+    groups = None
+    user_permissions = None
     
     USERNAME_FIELD = 'reg_number'
     class Meta:
@@ -209,3 +169,83 @@ class Student(AbstractBaseUser):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+
+# staff
+class Staff(AbstractBaseUser):
+    GENDER_CHOICE = (
+        ('male', 'Male'),
+        ('female', 'Female'),
+    )
+    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    middle_name = models.CharField(max_length=30, null=True)
+    birth_date = models.DateField(null=True)
+    cell_phone = models.CharField(max_length=20, null=True)
+    rol_number = models.CharField(max_length=20, null=True)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICE, default='male')
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
+    is_staff = models.BooleanField(default=True)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics/', null=True)
+    date_joined = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+    is_active = models.BooleanField(default= True)
+    is_staff = models.BooleanField(default= True)
+
+    USERNAME_FIELD = 'rol_number'
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        db_table = "staff"
+
+
+class Payment(models.Model):
+    amount = models.IntegerField()
+    status = models.BooleanField(default=0)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    def __str__(self):
+        return self.amount
+
+    class Meta:
+        db_table = "payment"
+    # END OF Payment MODEL
+
+class Biometric_data(models.Model):
+    fingerprint = models.CharField(max_length=500)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    class Meta:
+        db_table = "biometric_data"
+    # END OF Biometric_data MODEL
+
+
+class Exam_attendace(models.Model):
+    EXAM_TYPES = (
+        ('ue', 'University Exam'),
+        ('se', 'Supplementary Exam'),
+        ('t1', 'Test One'),
+        ('t2', 'Test Two'),
+    )
+    type_of_exam = models.CharField(max_length=2, choices=EXAM_TYPES, default='ue')
+    booklet_number = models.CharField(max_length=100)
+    exam_start_time = models.TimeField
+    exam_end_time = models.TimeField
+    signin_fingerprint = models.BinaryField()
+    signout_fingerprint = models.BinaryField()
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+    class Meta:
+        db_table ="exam_attendace"
+
+    def __str__(self):
+        return f"{self.user.username}'s {self.get_type_of_exam_display()} Exam Attendance"    

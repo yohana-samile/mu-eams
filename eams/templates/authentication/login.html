@@ -58,7 +58,15 @@
                                         <div class="text-center text-muted mb-4">
                                             <small>Sign in with credentials</small>
                                         </div>
-                                        <form action="" method="POST" autocomplete="off" role="form">                                        
+                                        <div class="alert alert-danger alert-dismisable">
+                                            {% if messages %}
+                                                {% for message in messages %}
+                                                    {{ message }}
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                        <form action="" method="POST" autocomplete="off" role="form">  
+                                            {% csrf_token %}                                   
                                             <div class="form-group mb-3">
                                                 <div class="input-group input-group-alternative">
                                                     <div class="input-group-prepend">

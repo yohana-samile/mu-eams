@@ -1,5 +1,5 @@
 from django import forms
-from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student
+from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, Staff
 
 # unit
 class FormUnit(forms.ModelForm):
@@ -48,3 +48,9 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         fields = ['password', 'first_name', 'last_name', 'middle_name', 'birth_date', 'cell_phone', 'reg_number', 'gender', 'programme', 'email']
+
+# staff
+class UserStaffForm(forms.ModelForm):
+    class Meta:
+        model = Staff
+        fields = ['password', 'first_name', 'last_name', 'middle_name', 'birth_date', 'cell_phone', 'rol_number', 'gender', 'unit', 'email']

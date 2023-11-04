@@ -12,6 +12,7 @@
             </div>
         </div>
     </div>
+    {% include 'resource/messages.html' %}
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -21,7 +22,7 @@
                         <th>Sur Name</th>
                         <th>Email</th>
                         <th>Regstration Number</th>
-                        <th>Unit</th>
+                        <th>Programme</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -31,7 +32,7 @@
                         <th>Sur Name</th>
                         <th>Email</th>
                         <th>Regstration Number</th>
-                        <th>Unit</th>
+                        <th>Programme</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>
@@ -42,7 +43,7 @@
                             <td>{{ student.last_name }}</td>
                             <td>{{ student.email }}</td>
                             <td>{{ student.reg_number }}</td>
-                            <td>{{ student.department }}</td>
+                            <td>{{ student.programme }}</td>
                             <td>
                                 <div class="row">
                                     <div class="col-md-4">

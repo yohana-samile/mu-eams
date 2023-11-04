@@ -2,15 +2,32 @@ from django.contrib import messages
 # from pyexpat.errors import messages
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
+from django.contrib.auth import authenticate, login, logout
 # forms
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm,  UserStaffForm
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student
-
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, Staff
 
 # Create your views here.
 def index(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('home')
+        else:
+            error_message = "Wrong username or password"
+            messages.error(request, error_message)
+            return redirect('index')
     return render(request, 'authentication/login.html')
+
+# logout
+def logout_view(request):
+    logout(request)
+    return redirect("authentication:login")
 
 def forgot_password(request):
     return render(request, 'authentication/forgot_password.html')
@@ -191,7 +208,9 @@ def student(request):
             # get_dept = Department.objects.get(id=int(request.POST['department']))
             # get_form.depertment = get_dept
             # get_form.save()
-            form.save()
+            student_user = form.save(commit=False)
+            student_user.set_password('password')
+            student_user.save()
 
             messages.add_message(request, messages.INFO, "Success, New Student Registred Successfully")
             return redirect('student')
@@ -210,3 +229,34 @@ def student(request):
     }
 
     return render(request, 'user/student.html', context)
+
+# UserStaffForm
+def staff(request):
+    if request.method == "POST":
+        form = UserStaffForm(request.POST)
+        if form.is_valid():
+            # rol_number = form.cleaned_data['rol_number']
+            # email = form.cleaned_data['email']
+            # if Staff.objects.filter(rol_number=rol_number).exists() or Staff.objects.filter(email=email).exists():
+            #     error = "Error, Staff User Exit"
+            #     # messages.success(request, "Error, Staff User Exit")
+            #     return render(request,'user/staff.html', error)
+
+            # else:
+            staff_user = form.save(commit=True)
+
+            staff_user.set_password('password')
+            staff_user.save()
+            messages.success(request, "Success, New Staff User Registered Successfully")
+            return redirect('staff')
+        else:
+            messages.error(request, "Something went wrong, Please try again.")
+    else:
+        form = UserStaffForm()
+        context = {
+            'form': form,
+            'all_staff': Staff.objects.all(),
+            'all_unit': Unit.objects.all(),
+            'all_prog': Programme.objects.all(),
+        }
+    return render(request,'user/staff.html', context)
