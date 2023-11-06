@@ -1,4 +1,4 @@
-{%load bootstrap_tags %}
+{%load django_bootstrap5 %}
 <!-- depertment Modal -->
 <div class="modal fade" id="depertment_modal" tabindex="-1" role="dialog" aria-labelledby="depertment_modal" aria-hidden="true">
     <div class="modal-dialog modal- modal-dialog-centered modal- modal-lg" role="document">
@@ -14,7 +14,7 @@
             <div class="modal-body">
                 <form action="" method="post">
                     {% csrf_token %}
-                    {{formOfDep}}
+                    {% bootstrap_form formOfDep %}
                     
                     <div class="form-group">
                         <input type="submit" value="Register Depertment" class="primary form-control">

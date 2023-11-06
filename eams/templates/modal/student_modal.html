@@ -1,4 +1,4 @@
-{% load bootstrap_tags %}
+{% load django_bootstrap5 %}
 <!-- student_modal -->
 <div class="modal fade" id="student_modal" tabindex="-1" role="dialog" aria-labelledby="student_modal" aria-hidden="true">
     <div class="modal-dialog modal- modal-dialog-centered modal- modal-lg" role="document">
@@ -14,7 +14,7 @@
             <div class="modal-body">
                 <form method="POST" id="form_registration">
                     {% csrf_token %}
-                    {{form|as_bootstrap}}
+                    {% bootstrap_form form %}
                     <div class="form-group">
                         <input type="submit" value="Register Student" class=" primary form-control">
                     </div>

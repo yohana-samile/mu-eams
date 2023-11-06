@@ -1,5 +1,5 @@
 <!-- staff Modal -->
-{%load bootstrap_tags %}
+{%load django_bootstrap5 %}
 <div class="modal fade" id="staff_modal" tabindex="-1" role="dialog" aria-labelledby="staff_modal" aria-hidden="true">
     <div class="modal-dialog modal- modal-dialog-centered modal- modal-lg" role="document">
         <div class="modal-content">
@@ -14,7 +14,8 @@
             <div class="modal-body">
                 <form action="" method="post">
                     {% csrf_token %}
-                    {{form|as_bootstrap}}
+                    {% bootstrap_form form %}
+
                     
                     <div class="form-group">
                         <input type="submit" value="Register Staff" class="primary form-control">
