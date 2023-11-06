@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm,  UserStaffForm
 # for fetching data
 from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, Staff
-
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def index(request):
     if request.method == "POST":
@@ -40,20 +40,25 @@ def footer(request):
 
 
 # protected view
+@login_required(login_url="authentication/../")
 def footer1(request):
     return render(request, 'layout/footer1.html')
 
+@login_required(login_url="authentication/../")
 def layout(request):
     return render(request, 'layout/layout.html')
 
+@login_required(login_url="authentication/../")
 def home(request):
     return render(request, 'home.html')
 
 # staff data
+@login_required(login_url="authentication/../")
 def staff(request):
     return render(request, 'user/staff.html')
 
 # units
+@login_required(login_url="authentication/../")
 def unit(request):
     if request.method == "POST":
         form = FormUnit(request.POST or None)
@@ -75,6 +80,7 @@ def unit(request):
 
 
 # depertment
+@login_required(login_url="authentication/../")
 def depertment(request):
     if request.method == 'POST':
         formOfDep = FormDepertment(request.POST or None)
@@ -98,6 +104,7 @@ def depertment(request):
     return render(request, 'depertment/depertment.html', context)
 
 # year_of_study
+@login_required(login_url="authentication/../")
 def year_of_study(request):
     if request.method == "POST":
         form = FormYearOFStudy(request.POST or None)
@@ -116,6 +123,7 @@ def year_of_study(request):
     return render(request, 'year_of_study/year_of_study.html', data)
 
 # programme
+@login_required(login_url="authentication/../")
 def programme(request):
     if request.method == "POST":
         form = FormProgramme(request.POST or None)
@@ -138,6 +146,7 @@ def programme(request):
     return render(request, "programme/programme.html", context)
 
 # education_level
+@login_required(login_url="authentication/../")
 def education_level(request):
     if request.method == "POST":
         form = FormEducationLevel(request.POST or None)
@@ -160,6 +169,7 @@ def education_level(request):
     return render(request, 'education_level/education_level.html', context)
 
 # semester
+@login_required(login_url="authentication/../")
 def semester(request):
     if request.method == "POST":
         form = FormSemester(request.POST or None)
@@ -179,6 +189,7 @@ def semester(request):
     return render(request, 'semester/semester.html', context)
 
 # course
+@login_required(login_url="authentication/../")
 def course(request):
     if request.method == "POST":
         form = FormCourse(request.POST or None)
@@ -200,6 +211,7 @@ def course(request):
 
 
 # student
+@login_required(login_url="authentication/../")
 def student(request):
     if request.method == "POST":
         form = StudentForm(request.POST)
@@ -231,6 +243,7 @@ def student(request):
     return render(request, 'user/student.html', context)
 
 # UserStaffForm
+@login_required(login_url="authentication/../")
 def staff(request):
     if request.method == "POST":
         form = UserStaffForm(request.POST)
@@ -260,3 +273,12 @@ def staff(request):
             'all_prog': Programme.objects.all(),
         }
     return render(request,'user/staff.html', context)
+
+
+# user profile
+def user_profile(request):
+    return render(request, 'user/user_profile.html')
+# logout
+# def logout(request):
+#     auth.logout(request)
+#     return render('authentication/logout.html')

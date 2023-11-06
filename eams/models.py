@@ -11,7 +11,7 @@ class Unit(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def ___str__(self):
-        return self.name
+        return self.unit_abbreviation
     class Meta:
         db_table = "unit"
     # END OF UNITS MODEL
