@@ -5,18 +5,24 @@
             <div class="card-header">First Year  
                 <div class="badge badge-primary">2023-2024 {{user.first_name}}</div>
             </div>
-            <div class="card-body">
-                <form action="" method="post">
-                    {% csrf_token %}
-                    <select name="semester" class="form-control" id="semester_id">
-                        <option disabled selected hidden>Choose Semester</option>
-                            {% for semester in all_semester %}
-                                <option value="{{semester.id}}">{{semester.name}}</option>
-                            {% endfor %}
-                        </select>
-                    <button class="btn btn-primary mt-3" type="submit">Register Me</button>
-                </form>
-            </div>
+            {% if student_semester_registration %}
+                <div class="alert alert-success">
+                    Congratulations You Complite Registration For This Semester <i class="fa fa-check"></i>
+                </div>
+            {% else %}
+                <div class="card-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <select name="semester" class="form-control" id="semester_id">
+                            <option disabled selected hidden>Choose Semester</option>
+                                {% for semester in all_semester %}
+                                    <option value="{{semester.id}}">{{semester.name}}</option>
+                                {% endfor %}
+                            </select>
+                        <button class="btn btn-primary mt-3" type="submit">Register Me</button>
+                    </form>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% include 'layout/footer1.html' %}

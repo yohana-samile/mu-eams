@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistrationForm
+from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration
 from django.contrib.auth.forms import UserCreationForm
 class FormUnit(forms.ModelForm):
     class Meta:
@@ -35,7 +35,11 @@ class FormEducationLevel(forms.ModelForm):
 class FormSemester(forms.ModelForm):
     class Meta:
         model = Semester
-        fields = ['name']
+        fields = ['name', 'semester_start_at', 'semester_end_at']
+        widgets = {
+            'semester_start_at': forms.DateInput(attrs={'type': 'date'}),
+            'semester_end_at': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 # FormCourse
 class FormCourse(forms.ModelForm):
@@ -53,5 +57,5 @@ class StudentForm(forms.ModelForm):
 # student_semester_registration
 class SemesterRegistrationForm(forms.ModelForm):
     class Meta:
-        model = SemesterRegistrationForm
+        model = SemesterRegistration
         fields = ['semester']

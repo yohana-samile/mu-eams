@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -264,9 +264,13 @@ def student_semester_registration(request):
             messages.error(request, messages.INFO, "Something went wrong, Please try again.")    
     else:
         form = SemesterRegistrationForm
+    user = request.user
+    semester_registrations = SemesterRegistration.objects.filter(user=user)
+
     semesters = {
         'all_semester': Semester.objects.all(),
-        'user_id': request.user
+        'user_id': user,
+        'student_semester_registration': semester_registrations,
     }
     return render(request, 'semester/student_semester_registration.html', {'form': form, **semesters})
 

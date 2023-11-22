@@ -64,7 +64,14 @@ class Education_level(models.Model):
     # END OF EDUCATION_LEVEL MODEL
 
 class Semester(models.Model):
-    name = models.CharField(max_length=200)
+    CHOICE_NAME = (
+        ('1', 'one'),
+        ('2', 'two')
+    )
+    name = models.CharField(max_length=200, choices=CHOICE_NAME, default=1)
+    semester_start_at = models.DateField()
+    semester_end_at = models.DateField()
+    status = models.TextField(default='continuing')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     def __str__(self):
@@ -187,18 +194,14 @@ class Exam_attendace(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s {self.get_type_of_exam_display()} Exam Attendance"    
-    
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     student = models.OneToOneField(Student, on_delete=models.CASCADE, null=True, blank=True)
-
     avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
     bio = models.TextField()
-
     class Meta:
         db_table = 'profile'
-
     def __str__(self):
         if self.user:
             return self.user.username 
@@ -209,12 +212,13 @@ class Profile(models.Model):
 
 
 # student_semester_registration
-class SemesterRegistrationForm(models.Model):
+class SemesterRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     semester_registration_status = models.TextField(default='registered')
+    # semester_end_at = models.DateField()
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
-        db_table = 'SemesterRegistrationForm'
+        db_table = 'SemesterRegistration'
     def __str__(self):
         return self.semester_registration_status
