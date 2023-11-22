@@ -1,13 +1,12 @@
 from django.contrib import messages
-# from pyexpat.errors import messages
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
-# forms
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm,  UserStaffForm
+from django.contrib.auth.models import User
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, Staff
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student
 from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 def index(request):
     if request.method == "POST":
@@ -40,25 +39,26 @@ def footer(request):
 
 
 # protected view
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def footer1(request):
     return render(request, 'layout/footer1.html')
 
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def layout(request):
-    return render(request, 'layout/layout.html')
+    user = request.user
+    return render(request, 'layout/layout.html', {'user': user})
 
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def home(request):
     return render(request, 'home.html')
 
 # staff data
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def staff(request):
     return render(request, 'user/staff.html')
 
 # units
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def unit(request):
     if request.method == "POST":
         form = FormUnit(request.POST or None)
@@ -80,7 +80,7 @@ def unit(request):
 
 
 # depertment
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def depertment(request):
     if request.method == 'POST':
         formOfDep = FormDepertment(request.POST or None)
@@ -104,7 +104,7 @@ def depertment(request):
     return render(request, 'depertment/depertment.html', context)
 
 # year_of_study
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def year_of_study(request):
     if request.method == "POST":
         form = FormYearOFStudy(request.POST or None)
@@ -123,7 +123,7 @@ def year_of_study(request):
     return render(request, 'year_of_study/year_of_study.html', data)
 
 # programme
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def programme(request):
     if request.method == "POST":
         form = FormProgramme(request.POST or None)
@@ -146,7 +146,7 @@ def programme(request):
     return render(request, "programme/programme.html", context)
 
 # education_level
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def education_level(request):
     if request.method == "POST":
         form = FormEducationLevel(request.POST or None)
@@ -169,7 +169,7 @@ def education_level(request):
     return render(request, 'education_level/education_level.html', context)
 
 # semester
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def semester(request):
     if request.method == "POST":
         form = FormSemester(request.POST or None)
@@ -189,7 +189,7 @@ def semester(request):
     return render(request, 'semester/semester.html', context)
 
 # course
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def course(request):
     if request.method == "POST":
         form = FormCourse(request.POST or None)
@@ -209,28 +209,26 @@ def course(request):
         }
     return render(request, 'course/course.html', context)
 
-
+from django.contrib.auth import get_user_model
 # student
-@login_required(login_url="authentication/../")
+# @login_required(login_url="authentication/../")
 def student(request):
     if request.method == "POST":
         form = StudentForm(request.POST)
         if form.is_valid():
-            # get_form = form.save(commit=False)
-            # get_dept = Department.objects.get(id=int(request.POST['department']))
-            # get_form.depertment = get_dept
-            # get_form.save()
-            student_user = form.save(commit=False)
-            student_user.set_password('password')
-            student_user.save()
-
+            localvar = form.save(commit=False)
+            user = get_user_model().objects.create_user(
+                username=request.POST['username'],
+                email=request.POST['email'],
+                password=request.POST['password'],
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name']
+            )
+            localvar.user = user
+            localvar.save()
             messages.add_message(request, messages.INFO, "Success, New Student Registred Successfully")
-            return redirect('student')
         else:
-            # print(request.POST['department'])
             messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
-            # print(form.errors)
-            return redirect('student')
     
     form = StudentForm()
     context = {
@@ -238,46 +236,40 @@ def student(request):
         'all_dep': Department.objects.all(),
         'all_prog': Programme.objects.all(),
         'students': Student.objects.all(),
+        # 'students': Student.objects.filter(student__isnull=False).values(
+        #     'first_name', 'last_name', 'email', 'username', 'programme'
+        # ),
     }
-
     return render(request, 'user/student.html', context)
 
-# UserStaffForm
-@login_required(login_url="authentication/../")
-def staff(request):
-    if request.method == "POST":
-        form = UserStaffForm(request.POST)
-        if form.is_valid():
-            # rol_number = form.cleaned_data['rol_number']
-            # email = form.cleaned_data['email']
-            # if Staff.objects.filter(rol_number=rol_number).exists() or Staff.objects.filter(email=email).exists():
-            #     error = "Error, Staff User Exit"
-            #     # messages.success(request, "Error, Staff User Exit")
-            #     return render(request,'user/staff.html', error)
-
-            # else:
-            staff_user = form.save(commit=True)
-
-            staff_user.set_password('password')
-            staff_user.save()
-            messages.success(request, "Success, New Staff User Registered Successfully")
-            return redirect('staff')
-        else:
-            messages.error(request, "Something went wrong, Please try again.")
-    else:
-        form = UserStaffForm()
-        context = {
-            'form': form,
-            'all_staff': Staff.objects.all(),
-            'all_unit': Unit.objects.all(),
-            'all_prog': Programme.objects.all(),
-        }
-    return render(request,'user/staff.html', context)
-
-
 # user profile
-def user_profile(request):
-    return render(request, 'user/user_profile.html')
+# @login_required(login_url='authentication/../')
+def profile(request):
+    user = request.user
+    return render(request, 'profile/user_profile.html', {'user': user})
+
+# student_semester_registration
+def student_semester_registration(request):
+    if request.method == "POST":
+        form = SemesterRegistrationForm(request.POST)
+        if form.is_valid():
+            semester_registration = form.save(commit=False)
+            semester_registration.user = request.user
+            semester_registration.save()
+
+            messages.add_message(request, messages.INFO, "Success, Successfully Registered On This Semester")
+            return redirect('student_semester_registration')
+
+        else:
+            messages.error(request, messages.INFO, "Something went wrong, Please try again.")    
+    else:
+        form = SemesterRegistrationForm
+    semesters = {
+        'all_semester': Semester.objects.all(),
+        'user_id': request.user
+    }
+    return render(request, 'semester/student_semester_registration.html', {'form': form, **semesters})
+
 # logout
 # def logout(request):
 #     auth.logout(request)

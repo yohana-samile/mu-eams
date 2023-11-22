@@ -14,7 +14,10 @@ urlpatterns = [
     path("footer1", views.footer1, name="footer1"),
     path("student", views.student, name="student"),
     path("staff", views.staff, name="staff"),
-    path("user_profile", views.user_profile, name="user_profile"),
+    # user profile
+    path("profile", views.profile, name="profile"),
+    path("staff_profile", views.profile, name="staff_profile"),
+    path("student_profile", views.profile, name="student_profile"),
     path("depertment", views.depertment, name="depertment"),
     path("unit", views.unit, name="unit"),
     path("year_of_study", views.year_of_study, name="year_of_study"),
@@ -22,5 +25,8 @@ urlpatterns = [
     path("education_level", views.education_level, name="education_level"),
     path("semester", views.semester, name="semester"),
     path("course", views.course, name="course"),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-# ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    # student_semester_registration
+    path("student_semester_registration", views.student_semester_registration, name="student_semester_registration")
+# ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

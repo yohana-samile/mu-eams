@@ -1,7 +1,8 @@
+from datetime import timezone
 from django.db import models
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
-
+from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 # Create your models here.
 
 class Unit(models.Model):
@@ -9,7 +10,6 @@ class Unit(models.Model):
     unit_abbreviation = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
     def ___str__(self):
         return self.unit_abbreviation
     class Meta:
@@ -22,8 +22,6 @@ class Department(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
-
-
     def __str__(self):
         return self.department_abbreviation
     class Meta:
@@ -35,10 +33,8 @@ class Year_of_study(models.Model):
     year = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
     def ___str__(self):
         return self.year
-
     class Meta:
         db_table = "year_of_study"
     # END OF Year_of_study MODEL
@@ -50,11 +46,9 @@ class Programme(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     year_of_study = models.ForeignKey(Year_of_study, on_delete=models.CASCADE)
-
     def ___str__(self):
-        return self.name
+        return self.programme_abbrevation
         # return f"{self.name} {self.programme_abbrevation}"
-
     class Meta:
         db_table = "programme"
     # END OF PROGRAMME MODEL
@@ -63,10 +57,8 @@ class Education_level(models.Model):
     name = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
     def __str__(self):
         return self.name
-
     class Meta:
         db_table = "education_level"
     # END OF EDUCATION_LEVEL MODEL
@@ -75,10 +67,8 @@ class Semester(models.Model):
     name = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
     def __str__(self):
         return self.name
-
     class Meta:
         db_table = "semester"
     # END OF SEMESTER MODEL
@@ -99,7 +89,6 @@ class Course(models.Model):
 class Course_programme(models.Model):
     programme = models.ForeignKey(Programme, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-
     class Meta:
         db_table = "course_programme"
     # END OF Course_programme MODEL
@@ -122,12 +111,12 @@ class CustomStudentUser(BaseUserManager):
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        
+            raise ValueError("Superuser must have is_staff=True.")        
         return self.create_user(email, password, **extra_fields)
-            
-# class Student(models.Model):
-class Student(AbstractBaseUser, PermissionsMixin):
+
+# class Student(AbstractBaseUser, PermissionsMixin):
+class Student(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     def default_depertment():
         try:
             return Department.objects.get(pk=1)
@@ -142,65 +131,18 @@ class Student(AbstractBaseUser, PermissionsMixin):
         ('male', 'Male'),
         ('female', 'Female'),
     )
-    
-    email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
     middle_name = models.CharField(max_length=30, null=True)
     birth_date = models.DateField(null=True)
     cell_phone = models.CharField(max_length=20, null=True)
     reg_number = models.CharField(max_length=20, null=True)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICE, default='male')
-    # department = models.ForeignKey(Department, on_delete=models.CASCADE, default=default_depertment)
     programme = models.ForeignKey(Programme, on_delete=models.CASCADE, default=default_programme)
-    is_staff = models.BooleanField(default=False)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics/', null=True)
-    date_joined = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-    is_active = models.BooleanField(default= True)
-    is_staff = models.BooleanField(default= False)
-    is_superuser = models.BooleanField(default= False)
-    groups = None
-    user_permissions = None
-    
-    USERNAME_FIELD = 'reg_number'
     class Meta:
         db_table = "student"
-
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-    
-
-# staff
-class Staff(AbstractBaseUser):
-    GENDER_CHOICE = (
-        ('male', 'Male'),
-        ('female', 'Female'),
-    )
-    email = models.EmailField(unique=True)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-    middle_name = models.CharField(max_length=30, null=True)
-    birth_date = models.DateField(null=True)
-    cell_phone = models.CharField(max_length=20, null=True)
-    rol_number = models.CharField(max_length=20, null=True)
-    gender = models.CharField(max_length=20, choices=GENDER_CHOICE, default='male')
-    unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
-    is_staff = models.BooleanField(default=True)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics/', null=True)
-    date_joined = models.DateTimeField(auto_now_add = True)
-    updated_at = models.DateTimeField(auto_now = True)
-    is_active = models.BooleanField(default= True)
-    is_staff = models.BooleanField(default= True)
-
-    USERNAME_FIELD = 'rol_number'
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-
-    class Meta:
-        db_table = "staff"
-
+        # return f"{self.reg_number}"
+        return self.reg_number
 
 class Payment(models.Model):
     amount = models.IntegerField()
@@ -208,24 +150,20 @@ class Payment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
     def __str__(self):
         return self.amount
-
     class Meta:
         db_table = "payment"
     # END OF Payment MODEL
 
 class Biometric_data(models.Model):
     fingerprint = models.CharField(max_length=500)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
     class Meta:
         db_table = "biometric_data"
     # END OF Biometric_data MODEL
-
 
 class Exam_attendace(models.Model):
     EXAM_TYPES = (
@@ -249,3 +187,34 @@ class Exam_attendace(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s {self.get_type_of_exam_display()} Exam Attendance"    
+    
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    student = models.OneToOneField(Student, on_delete=models.CASCADE, null=True, blank=True)
+
+    avatar = models.ImageField(default='default.jpg', upload_to='profile_images')
+    bio = models.TextField()
+
+    class Meta:
+        db_table = 'profile'
+
+    def __str__(self):
+        if self.user:
+            return self.user.username 
+        elif self.student:
+            return self.student.username 
+        else:
+            return "Not Student User Or Staff"
+
+
+# student_semester_registration
+class SemesterRegistrationForm(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    semester_registration_status = models.TextField(default='registered')
+    updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        db_table = 'SemesterRegistrationForm'
+    def __str__(self):
+        return self.semester_registration_status

@@ -45,7 +45,7 @@
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="collapse-inner rounded" style="background-color: #002E3B;">
                         <a class="collapse-item text-white" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item text-white" href="utilities-color.html">Colors</a>
+                        <a class="collapse-item text-white" href="{% url 'student_semester_registration' %}">Semester Registration</a>
                         <a class="collapse-item text-white" href="utilities-color.html">Registration History</a>
                     </div>
                 </div>
@@ -188,7 +188,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle btn btn-sm btn-light" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.first_name }} {{ user.last_name }}</span>
                                 <img class="img-profile rounded-circle" src="{% static '/img/undraw_profile.svg' %}" alt="profile">
                             </a>
                             <!-- Dropdown - User Information -->
@@ -197,7 +197,7 @@
                                 <div class="" style="background-color: #002E3B;">
                                     <img src="{% static '/img/undraw_profile.svg' %}" alt="Dashboard" class="dashboard-img">
                                 </div>
-                                <a class="dropdown-item" href="{% url 'user_profile' %}">
+                                <a class="dropdown-item" href="{% url 'profile' %}">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>

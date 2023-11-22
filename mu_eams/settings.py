@@ -155,3 +155,8 @@ MESSAGE_TAGS = {
 
 AUTHENTICATION_BACKENDS = ['eams.backends.UserStudentAuthBackend']
 LOGIN_URL = 'login'
+
+
+# for img
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

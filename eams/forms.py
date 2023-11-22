@@ -1,7 +1,7 @@
 from django import forms
-from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, Staff
-
-# unit
+from django.contrib.auth.models import User
+from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistrationForm
+from django.contrib.auth.forms import UserCreationForm
 class FormUnit(forms.ModelForm):
     class Meta:
         model = Unit
@@ -47,10 +47,11 @@ class FormCourse(forms.ModelForm):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['password', 'first_name', 'last_name', 'middle_name', 'birth_date', 'cell_phone', 'reg_number', 'gender', 'programme', 'email']
+        exclude = ['user']
+        # fields = ['email', 'password', 'first_name', 'last_name', 'middle_name', 'birth_date', 'cell_phone', 'reg_number', 'gender', 'programme']
 
-# staff
-class UserStaffForm(forms.ModelForm):
+# student_semester_registration
+class SemesterRegistrationForm(forms.ModelForm):
     class Meta:
-        model = Staff
-        fields = ['password', 'first_name', 'last_name', 'middle_name', 'birth_date', 'cell_phone', 'rol_number', 'gender', 'unit', 'email']
+        model = SemesterRegistrationForm
+        fields = ['semester']
