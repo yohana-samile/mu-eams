@@ -45,7 +45,7 @@ class FormSemester(forms.ModelForm):
 class FormCourse(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name', 'code', 'semester']
+        fields = ['name', 'code', 'semester', 'type', 'credit']
 
 # student 
 class StudentForm(forms.ModelForm):

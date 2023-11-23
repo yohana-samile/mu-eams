@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm
 # for fetching data
 from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 # Create your views here.
 def index(request):
@@ -15,6 +15,11 @@ def index(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
+            # end semester
+            current_Semester = Semester.objects.filter(semester_end_at__lte=timezone.now()).first()
+            if current_Semester and current_Semester.status == 'continuing':
+                current_Semester.status = 'end'
+                current_Semester.save()
             login(request,user)
             return redirect('home')
         else:
@@ -46,7 +51,12 @@ def footer1(request):
 # @login_required(login_url="authentication/../")
 def layout(request):
     user = request.user
-    return render(request, 'layout/layout.html', {'user': user})
+    student_regstraion = SemesterRegistration.objects.filter(semester_registration_status='regstered', user=request.user).first()
+    student = {
+        'user': user,
+        'student_regstraion': student_regstraion
+    }
+    return render(request, 'layout/layout.html', student)
 
 # @login_required(login_url="authentication/../")
 def home(request):
@@ -184,7 +194,7 @@ def semester(request):
         form = FormSemester()
         context = {
             'form':form,
-            'semesters': Semester.objects.all()
+            'semesters': Semester.objects.order_by('-created_at')
         }
     return render(request, 'semester/semester.html', context)
 
@@ -238,6 +248,7 @@ def student(request):
         'students': Student.objects.all(),
         # 'students': Student.objects.filter(student__isnull=False).values(
         #     'first_name', 'last_name', 'email', 'username', 'programme'
+        # mumsaco1_mumsa pass mumsa1234567890mumsa
         # ),
     }
     return render(request, 'user/student.html', context)
@@ -266,14 +277,13 @@ def student_semester_registration(request):
         form = SemesterRegistrationForm
     user = request.user
     semester_registrations = SemesterRegistration.objects.filter(user=user)
-
     semesters = {
-        'all_semester': Semester.objects.all(),
         'user_id': user,
+        'all_semester': Semester.objects.all(),
         'student_semester_registration': semester_registrations,
     }
-    return render(request, 'semester/student_semester_registration.html', {'form': form, **semesters})
-
+    return render(request, 'semester/student_semester_registration.html', semesters)
+   
 # logout
 # def logout(request):
 #     auth.logout(request)

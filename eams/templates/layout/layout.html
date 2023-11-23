@@ -44,9 +44,12 @@
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="collapse-inner rounded" style="background-color: #002E3B;">
-                        <a class="collapse-item text-white" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item text-white" href="{% url 'student_semester_registration' %}">Semester Registration</a>
-                        <a class="collapse-item text-white" href="utilities-color.html">Registration History</a>
+                        <a class="collapse-item text-white" href="">Course Registration</a>
+                        {% if student_regstraion %}
+                            <a class="collapse-item text-white" href="{% url 'student_semester_registration' %}">Semester Registration</a>
+                        {% endif %}
+                        <a class="collapse-item text-white" href="">Programme Stracture</a>
+                        <a class="collapse-item text-white" href="">Registration History</a>
                     </div>
                 </div>
             </li>

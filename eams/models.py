@@ -81,9 +81,15 @@ class Semester(models.Model):
     # END OF SEMESTER MODEL
 
 class Course(models.Model):
+    CHOICE_TYPE = (
+        ('Core', 'Core'),
+        ('None Core', 'None Core')
+    )
     name = models.CharField(max_length=200)
     code = models.CharField(max_length=200)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    type = models.CharField(max_length=100, choices=CHOICE_TYPE, default='Core')
+    credit = models.FloatField(default=8.00)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -215,7 +221,7 @@ class Profile(models.Model):
 class SemesterRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    semester_registration_status = models.TextField(default='registered')
+    semester_registration_status = models.CharField(max_length=100, default='registered')
     # semester_end_at = models.DateField()
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:

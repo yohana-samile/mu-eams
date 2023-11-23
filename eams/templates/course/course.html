@@ -22,9 +22,11 @@
                         <th>Name</th>
                         <th>Code</th>
                         <th>Semester</th>
-                        <th>Date Created</th>
-                        <th>Date Updated</th>
-                        <th>Action</th>
+                        <th>Type</th>
+                        <th>Credit</th>
+                        {% if user.is_staff != 0 %}
+                            <th>Action</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tfoot>
@@ -33,9 +35,11 @@
                         <th>Name</th>
                         <th>Code</th>
                         <th>Semester</th>
-                        <th>Date Created</th>
-                        <th>Date Updated</th>
-                        <th>Action</th>
+                        <th>Type</th>
+                        <th>Credit</th>
+                        {% if user.is_staff != 0 %}
+                            <th>Action</th>
+                        {% endif %}
                     </tr>
                 </tfoot>
                 <tbody>
@@ -53,21 +57,23 @@
                                     <span class="badge badge-danger">Unkwon</span>
                                 {%endif %}
                             </td>
-                            <td>{{course.created_at}}</td>
-                            <td>{{course.created_at}}</td>
-                            <td>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <i class="fa fa-eye text-primary"></i>
+                            <td>{{course.type}}</td>
+                            <td>{{course.credit}}</td>
+                            {% if user.is_staff != 0 %}
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <i class="fa fa-eye text-primary"></i>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <i class="fa fa-edit text-primary"></i>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <i class="fa fa-edit text-primary"></i>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <i class="fa fa-trash text-danger"></i>
-                                    </div>
-                                </div>
-                            </td>
+                                </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
