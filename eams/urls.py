@@ -27,6 +27,14 @@ urlpatterns = [
     path("course", views.course, name="course"),
 
     # student_semester_registration
-    path("student_semester_registration", views.student_semester_registration, name="student_semester_registration")
+    path("student_semester_registration", views.student_semester_registration, name="student_semester_registration"),
+    # programme_stracture
+    path("programme_stracture", views.programme_stracture, name="programme_stracture"),
+    # register_my_course
+    path("register_my_course", views.register_my_course, name="register_my_course"),
+
+    # exam_attendance, payment
+    path("exam_attendance", views.exam_attendance, name="exam_attendance"),
+    path("payment", views.payment, name="payment")
 # ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

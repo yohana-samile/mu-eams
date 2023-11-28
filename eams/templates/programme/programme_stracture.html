@@ -1,0 +1,62 @@
+{%load static %}
+{% include 'layout/layout.html' %}
+<!-- unit data -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold">Programme Structure</h6>
+        {% include 'resource/messages.html' %}
+        <div class="card-body">
+            <div class="table-responsive">
+                <div class="card mb-3">
+                    <div class="row col-md-4">
+                        <ul>
+                            <li class="list-inline">
+                                {% for year in years %}
+                                    <a href="" style="cursor: pointer; color: tomato;">Year {{ year.year }}</a>
+                                {% endfor %}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-header">Semester 1<span style="float: right;">Minimum Credit:</span></div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Semester</th>
+                                <th>Type</th>
+                                <th>Credit</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {% for course in courses %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td><a href="javascript:void(0)" style="text-decoration: none; color: tomato;">{{course.name}}</a></td>
+                                        <td>{{course.code}}</td>
+                                        <td>
+                                            {% if course.name != 1 %}
+                                                <span class="badge badge-primary"> First</span>
+                                            {% elif course.name == 2 %}
+                                                <span class="badge badge-primary"> Second</span>
+                                            {% else %}
+                                                <span class="badge badge-danger">Unkwon</span>
+                                            {%endif %}
+                                        </td>
+                                        <td>{{course.type}}</td>
+                                        <td>{{course.credit}}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    <p class="card-text">Total <span style="float: right;">70</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'layout/footer1.html' %}

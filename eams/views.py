@@ -249,6 +249,7 @@ def student(request):
         # 'students': Student.objects.filter(student__isnull=False).values(
         #     'first_name', 'last_name', 'email', 'username', 'programme'
         # mumsaco1_mumsa pass mumsa1234567890mumsa
+        # email mumsa@mumsa.co.tz pass mumsa1234567890mumsa
         # ),
     }
     return render(request, 'user/student.html', context)
@@ -284,6 +285,22 @@ def student_semester_registration(request):
     }
     return render(request, 'semester/student_semester_registration.html', semesters)
    
+def programme_stracture(request):
+    context = {
+        'courses': Course.objects.all(),
+        'years': Year_of_study.objects.all()
+    }
+    return render(request, 'programme/programme_stracture.html', context)
+
+# register_my_course
+def register_my_course(request):
+    return render(request, 'course/register_my_course.html')
+
+# exam_attendance, payment
+def exam_attendance(request):
+    return render(request, "exam/exam_attendance.html")
+def payment(request):
+    return render(request, 'payment/payment.html')
 # logout
 # def logout(request):
 #     auth.logout(request)
