@@ -158,9 +158,9 @@ class Student(models.Model):
         return self.reg_number
 
 class Payment(models.Model):
-    amount = models.IntegerField()
-    status = models.BooleanField(default=0)
+    amount = models.PositiveIntegerField()
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    receipt = models.PositiveIntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
     def __str__(self):
@@ -210,7 +210,7 @@ class Profile(models.Model):
         db_table = 'profile'
     def __str__(self):
         if self.user:
-            return self.user.username 
+            return self.user.username
         elif self.student:
             return self.student.username 
         else:

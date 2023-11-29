@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm
+
+from django.db.models import Sum
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+import random
 
 # Create your views here.
 def index(request):
@@ -61,11 +64,6 @@ def layout(request):
 # @login_required(login_url="authentication/../")
 def home(request):
     return render(request, 'home.html')
-
-# staff data
-# @login_required(login_url="authentication/../")
-def staff(request):
-    return render(request, 'user/staff.html')
 
 # units
 # @login_required(login_url="authentication/../")
@@ -254,6 +252,33 @@ def student(request):
     }
     return render(request, 'user/student.html', context)
 
+# staff data
+# @login_required(login_url="authentication/../")
+def staff(request):
+    if request.method == "POST":
+        form = StaffForm(request.POST)
+        if form.is_valid():
+            register_staff = form.save(commit=False)
+            user = get_user_model().objects.create_user(
+                username=request.POST['username'],
+                email=request.POST['email'],
+                password=request.POST['password'],
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name']
+            )
+            register_staff.user = user
+            register_staff.save()
+            messages.add_message(request, messages.INFO, "Success, New Staff Registred Successfully")
+        else:
+            messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
+    form = StaffForm()
+    context = {
+        'form':form,
+        'all_dep': Department.objects.all(),
+        'students': Student.objects.all(),
+    }
+    return render(request, 'user/staff.html', context)
+
 # user profile
 # @login_required(login_url='authentication/../')
 def profile(request):
@@ -299,8 +324,31 @@ def register_my_course(request):
 # exam_attendance, payment
 def exam_attendance(request):
     return render(request, "exam/exam_attendance.html")
+
 def payment(request):
-    return render(request, 'payment/payment.html')
+    if request.method == "POST":
+        form = Payment_for_Student(request.POST)
+        if form.is_valid():
+            receipt_number = random.randint(100000, 999999)
+            student_payment = form.save(commit=False)
+            student_payment.receipt = receipt_number
+            student_payment.save()
+            messages.add_message(request, messages.INFO, "Payment Complite")
+            return redirect('payment')
+        else:
+            messages.error(request, messages.INFO, "Something went wrong, Please try again.")
+    form = Payment_for_Student()
+    user = request.user
+    student = Student.objects.get(user=user)
+    payments = Payment.objects.filter(student=student)
+    total_paid = payments.aggregate(total_paid_amount=Sum('amount'))['total_paid_amount'] or 0
+
+    context = {
+        'user': user,
+        'payments': payments,
+        'total_paid': total_paid
+    }
+    return render(request, 'payment/payment.html', context)
 # logout
 # def logout(request):
 #     auth.logout(request)

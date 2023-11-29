@@ -17,28 +17,29 @@
                     <!-- staff.html -->
                 <form method="post" action="">
                     {% csrf_token %}
-                    <div>
-                    <label for="username">Username:</label>
-                    <input type="text" name="username" required>
+                    {% bootstrap_form form %}
+                    <div class="form-group">
+                        <label for="first_name">first_name:</label>
+                        <input type="text" name="first_name" id="first_name" class="form-control" required>
                     </div>
-                    <div>
-                    <label for="email">Email:</label>
-                    <input type="email" name="email" required>
+                    <div class="form-group">
+                        <label for="last_name">last_name:</label>
+                        <input type="text" name="last_name" id="last_name" class="form-control" required>
                     </div>
-                    <div>
-                    <label for="password">Password:</label>
-                    <input type="password" name="password" required>
+                    <div class="form-group">
+                        <label for="id_username">Username:</label>
+                        <input type="text" name="username" id="id_username" class="form-control" required>
                     </div>
-                    <div>
-                    <label for="first_name">First Name:</label>
-                    <input type="text" name="first_name" required>
+                    <div class="form-group">
+                        <label for="email">email:</label>
+                        <input type="email" name="email" id="email" class="form-control" required>
                     </div>
-                    <div>
-                    <label for="last_name">Last Name:</label>
-                    <input type="text" name="last_name" required>
+                    <div class="form-group">
+                        <label for="password">password:</label>
+                        <input type="password" name="password" id="password" class="form-control" required>
                     </div>
-                    <div>
-                    <input type="submit" value="Register">
+                    <div class="form-group">
+                        <input type="submit" value="Register Staff" class="form-control">
                     </div>
                 </form>
   
