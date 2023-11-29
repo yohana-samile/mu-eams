@@ -23,9 +23,8 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Rol Number</th>
-                        <th>Unit</th>
-                        <th>Role</th>
+                        <th>Department</th>
+                        <th>Is_staff</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -33,20 +32,18 @@
                     <tr>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Rol Number</th>
-                        <th>Unit</th>
-                        <th>Role</th>
+                        <th>Department</th>
+                        <th>Is_staff</th>
                         <th>Action</th>
                     </tr>
                 </tfoot>
                 <tbody>
-                    {% for staff in all_staff %}
+                    {% for staff in staffs %}
                         <tr>
                             <td>{{staff.first_name}} {{staff.last_name}}</td>
                             <td>{{staff.email}}</td>
-                            <td>{{staff.rol_number}}</td>
                             <td>{{staff.unit}}</td>
-                            <td>
+                            <td class=" text-center">
                                 <div class="badge badge-primary">
                                     {{staff.is_staff}} <i class="fa fa-check"></i></td>
                                 </div>

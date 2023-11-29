@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
 from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import random
@@ -271,7 +271,7 @@ def staff(request):
     context = {
         'form':form,
         'all_dep': Department.objects.all(),
-        'students': Student.objects.all(),
+        'staffs': Staff.objects.all(),
     }
     return render(request, 'user/staff.html', context)
 
@@ -345,6 +345,10 @@ def payment(request):
         'total_paid': total_paid
     }
     return render(request, 'payment/payment.html', context)
+
+# student_cw
+def student_cw(request):
+    return render(request, 'cw/student_cw.html')
 # logout
 # def logout(request):
 #     auth.logout(request)

@@ -35,6 +35,7 @@ urlpatterns = [
 
     # exam_attendance, payment
     path("exam_attendance", views.exam_attendance, name="exam_attendance"),
-    path("payment", views.payment, name="payment")
+    path("payment", views.payment, name="payment"),
+    path("student_cw", views.student_cw, name="student_cw")
 # ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
