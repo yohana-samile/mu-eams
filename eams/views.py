@@ -244,11 +244,6 @@ def student(request):
         'all_dep': Department.objects.all(),
         'all_prog': Programme.objects.all(),
         'students': Student.objects.all(),
-        # 'students': Student.objects.filter(student__isnull=False).values(
-        #     'first_name', 'last_name', 'email', 'username', 'programme'
-        # mumsaco1_mumsa pass mumsa1234567890mumsa
-        # email mumsa@mumsa.co.tz pass mumsa1234567890mumsa
-        # ),
     }
     return render(request, 'user/student.html', context)
 
@@ -264,7 +259,8 @@ def staff(request):
                 email=request.POST['email'],
                 password=request.POST['password'],
                 first_name=request.POST['first_name'],
-                last_name=request.POST['last_name']
+                last_name=request.POST['last_name'],
+                is_staff=True
             )
             register_staff.user = user
             register_staff.save()

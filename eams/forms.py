@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment
+from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff
 class FormUnit(forms.ModelForm):
     class Meta:
         model = Unit
@@ -51,11 +51,11 @@ class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
         exclude = ['user']
-        
+
 # StaffForm
 class StaffForm(forms.ModelForm):
     class Meta:
-        model = Student
+        model = Staff
         exclude = ['user']
 
 # student_semester_registration

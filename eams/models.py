@@ -156,6 +156,28 @@ class Student(models.Model):
     def __str__(self):
         # return f"{self.reg_number}"
         return self.reg_number
+    
+class Staff(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    def default_depertment():
+        try:
+            return Department.objects.get(pk=1)
+        except Department.DoesNotExit:
+            return None
+    GENDER_CHOICE = (
+        ('male', 'Male'),
+        ('female', 'Female'),
+    )
+    middle_name = models.CharField(max_length=30, null=True)
+    birth_date = models.DateField(null=True)
+    cell_phone = models.CharField(max_length=20, null=True)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICE, default='male')
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, default=default_depertment)
+    updated_at = models.DateTimeField(auto_now = True)
+    class Meta:
+        db_table = "staff"
+    def __str__(self):
+        return self.email
 
 class Payment(models.Model):
     amount = models.PositiveIntegerField()
