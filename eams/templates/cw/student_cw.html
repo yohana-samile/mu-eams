@@ -1,3 +1,19 @@
 {%load static %}
 {% include 'layout/layout.html' %}
+    <div class="container">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <select name="programme" id="programme" class="form-control">
+                    <option selected disabled hidden>Choose Programme</option>
+                    {% for programme in programmes %}
+                        <option value="{{ programme.id }}">{{ programmes.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="form-control primary">
+            </div>
+        </form>
+    </div>
 {% include 'layout/footer1.html' %}

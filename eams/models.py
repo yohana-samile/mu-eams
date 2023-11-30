@@ -46,9 +46,8 @@ class Programme(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     year_of_study = models.ForeignKey(Year_of_study, on_delete=models.CASCADE)
-    def ___str__(self):
+    def __str__(self):
         return self.programme_abbrevation
-        # return f"{self.name} {self.programme_abbrevation}"
     class Meta:
         db_table = "programme"
     # END OF PROGRAMME MODEL

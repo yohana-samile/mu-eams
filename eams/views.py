@@ -348,7 +348,10 @@ def payment(request):
 
 # student_cw
 def student_cw(request):
-    return render(request, 'cw/student_cw.html')
+    context = {
+        'programmes': Programme.objects.all()
+    }
+    return render(request, 'cw/student_cw.html', context)
 # logout
 # def logout(request):
 #     auth.logout(request)
