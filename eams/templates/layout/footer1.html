@@ -32,6 +32,42 @@
                 }
             }
             window.onload = hideMessage;
+
+            // get student according to their programme of study
+            $(document).ready(function (){
+                $('#programme').change(function () {
+                    var selectedProgrammeId = $(this).val();
+                    // send ajax to retrive data
+                    $.ajax({
+                        url: '/eams/student_cw/',
+                        type: 'GET',
+                        data: { programme_id: selectedProgrammeId },
+                        success: function (data) {
+                            var studentsHtml = '';  // Initialize an empty string to store HTML content
+                            // Iterate through the list of students and build HTML content
+                            for (var i = 0; i < data.students.length; i++) {
+                                studentsHtml += '<tr>';
+                                studentsHtml += '<td>' + (i + 1) + '</td>';
+                                studentsHtml += '<td>' + data.students[i].reg_number + '</td>';
+                                studentsHtml += '<td>' + data.students[i].programme_abbrevation + '</td>';
+                                var matchingCourse = data.courses.find(course => course.id === data.students[i].course_id);
+                                if (matchingCourse) {
+                                    studentsHtml += '<td>' + matchingCourse.code + '</td>';
+                                } else {
+                                    studentsHtml += '<td></td>'; // Handle the case when no matching course is found
+                                }
+                                studentsHtml += '<td><form action="" method="post"> {% csrf_token %} <div class="form-group"> <input type="number" name="cw" id="cw" placeholder="Enter CW" class="form-control" required></div> <div class="form-group"> <input type="submit" value="Register Depertment" class="primary form-control">  </div></form></td>';  // Add your logic for this cell
+                                studentsHtml += '<td><div class="row"> <div class="col-md-4">  <i class="fa fa-eye text-primary"></i> </div>  <div class="col-md-4"> <i class="fa fa-edit text-primary"></i> </div>  <div class="col-md-4">  <i class="fa fa-trash text-danger"></i> </div> </div></td>';
+                                studentsHtml += '</tr>';
+                            }       
+                            $('#students-container').html(studentsHtml);   
+                        },
+                        error: function () {
+                            console.log("error")
+                        }
+                    });
+                });
+            });
         </script>
 
         <!-- Scroll to Top Button-->

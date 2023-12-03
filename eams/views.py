@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 
@@ -347,11 +348,32 @@ def payment(request):
     return render(request, 'payment/payment.html', context)
 
 # student_cw
+from django.core.serializers import serialize
 def student_cw(request):
+    if request.method == "GET" and 'programme_id' in request.GET:
+        programme_id = request.GET['programme_id']
+        # Implement logic to retrieve students based on the selected program ID
+        students = Student.objects.filter(programme_id=programme_id).select_related('programme')
+        courses = Course.objects.all()    
+        programmes = Programme.objects.all()
+
+
+        students_data = [{'id': student.id, 'reg_number': student.reg_number, 'programme_abbrevation': student.programme.programme_abbrevation } for student in students]
+        courses_data = [{'id': course.id, 'code': course.code} for course in courses]
+        programmes_data = [{'id': programme.id, 'programme_abbrevation': programme.programme_abbrevation} for programme in programmes]
+
+        context = {
+            'programmes': programmes_data,
+            'courses': courses_data,
+            'students': students_data
+        }
+        return JsonResponse(context, safe=False)
     context = {
-        'programmes': Programme.objects.all()
+        'programmes': Programme.objects.all(),
+        'courses': Course.objects.all(),
     }
     return render(request, 'cw/student_cw.html', context)
+
 # logout
 # def logout(request):
 #     auth.logout(request)

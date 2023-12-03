@@ -90,8 +90,19 @@
                         <span>Student Guide</span></a>
                 </li>
             {% elif user.is_staff == 1 %}
-                <!-- USERS -->
+                <!-- cv -->
                 <li class="nav-item">
+                    <a class="nav-link" href="{% url 'student_cw' %}">
+                        <i class="fas fa-fw fa-book-open"></i>
+                        <span>Student Course Work</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'exam_attendance' %}">
+                        <i class="fas fa-fw fa-book"></i>
+                        <span>Exam Attendance</span></a>
+                </li>
+                 <!-- USERS -->
+                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
                         aria-expanded="true" aria-controls="collapseUsers">
                         <i class="fas fa-fw fa-user"></i>
@@ -104,17 +115,6 @@
                             <a class="collapse-item text-white" href="{% url 'staff' %}">Staff</a>
                         </div>
                     </div>
-                </li>
-                <!-- cv -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'student_cw' %}">
-                        <i class="fas fa-fw fa-book-open"></i>
-                        <span>Student Course Work</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'exam_attendance' %}">
-                        <i class="fas fa-fw fa-book"></i>
-                        <span>Exam Attendance</span></a>
                 </li>
                 <!-- Nav Item - Mu Units -->
                 <li class="nav-item">

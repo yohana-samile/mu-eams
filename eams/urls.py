@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import student_cw
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
@@ -36,6 +37,8 @@ urlpatterns = [
     # exam_attendance, payment
     path("exam_attendance", views.exam_attendance, name="exam_attendance"),
     path("payment", views.payment, name="payment"),
-    path("student_cw", views.student_cw, name="student_cw")
+    # path("student_cw", views.student_cw, name="student_cw")
+    path('student_cw/', student_cw, name='student_cw'),
+
 # ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

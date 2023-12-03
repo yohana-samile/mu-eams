@@ -7,12 +7,49 @@
                 <select name="programme" id="programme" class="form-control">
                     <option selected disabled hidden>Choose Programme</option>
                     {% for programme in programmes %}
-                        <option value="{{ programme.id }}">{{ programmes.name }}</option>
+                        <option value="{{ programme.id }}">{{ programme.name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Submit" class="form-control primary">
+                <select name="course" id="course" class="form-control">
+                    <option selected disabled hidden>Choose Course</option>
+                    {% for course in courses %}
+                        <option value="{{ course.id }}">{{ course.code }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    Submit Student Course Work
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Student Reg</th>
+                                <th>Prograame Abb</th>
+                                <th>Course Code</th>
+                                <th>CW</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Student Reg</th>
+                                <th>Prograame Abb</th>
+                                <th>Course Code</th>
+                                <th>CW</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                        <tbody id="students-container">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit CW To Selected Course" class="form-control primary">
             </div>
         </form>
     </div>
