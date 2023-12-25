@@ -249,3 +249,17 @@ class SemesterRegistration(models.Model):
         db_table = 'SemesterRegistration'
     def __str__(self):
         return self.semester_registration_status
+    
+# student_cw
+class Student_course_work(models.Model):
+    programme = models.ForeignKey(Programme, on_delete=models.CASCADE)
+    course = models.IntegerField(null=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    # staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    course_work_value = models.FloatField()
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'student_course_work'
+    def __str__(self):
+        return self.course_work

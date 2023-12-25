@@ -1,12 +1,13 @@
+import json
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 
 from django.db.models import Sum
 from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import random
@@ -346,10 +347,11 @@ def payment(request):
         'total_paid': total_paid
     }
     return render(request, 'payment/payment.html', context)
+from django.template.loader import render_to_string
 
 # student_cw
-from django.core.serializers import serialize
 def student_cw(request):
+    user = request.user
     if request.method == "GET" and 'programme_id' in request.GET:
         programme_id = request.GET['programme_id']
         # Implement logic to retrieve students based on the selected program ID
@@ -357,22 +359,52 @@ def student_cw(request):
         courses = Course.objects.all()    
         programmes = Programme.objects.all()
 
-
         students_data = [{'id': student.id, 'reg_number': student.reg_number, 'programme_abbrevation': student.programme.programme_abbrevation } for student in students]
         courses_data = [{'id': course.id, 'code': course.code} for course in courses]
         programmes_data = [{'id': programme.id, 'programme_abbrevation': programme.programme_abbrevation} for programme in programmes]
 
         context = {
+            'user_id': user.id,
             'programmes': programmes_data,
             'courses': courses_data,
             'students': students_data
         }
         return JsonResponse(context, safe=False)
-    context = {
-        'programmes': Programme.objects.all(),
-        'courses': Course.objects.all(),
-    }
-    return render(request, 'cw/student_cw.html', context)
+    
+    # data submission
+    elif request.method == "POST":
+        course_work_value = request.POST.get('course_work_value')
+        programme_id = request.POST.get('programme_id')
+        student_id = request.POST.get('student_id')
+        id = request.POST.get('id')
+
+        # check if cw submitted 
+        student_course_work_instance, created = Student_course_work.objects.get_or_create(
+            course_work_value = course_work_value,
+            programme_id=programme_id,
+            student_id=student_id,
+        ) 
+        student_course_work_instance.course_work_value = course_work_value
+        if created:
+            student_course_work_instance.id = id
+            student_course_work_instance.save()
+        
+        student_course_work = Student_course_work.objects.all()
+        success = {
+            'success': True,     
+            'course_id': student_course_work_instance.id,
+            'updateCw': course_work_value,
+        }
+        return JsonResponse(success)
+
+    else:
+        context = {
+            'programmes': Programme.objects.all(),
+            'courses': Course.objects.all(),
+        }
+        template =  'cw/student_cw.html'
+    return render(request, template, context)
+
 
 # logout
 # def logout(request):
