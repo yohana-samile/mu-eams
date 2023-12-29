@@ -208,19 +208,20 @@ class Exam_attendace(models.Model):
     )
     type_of_exam = models.CharField(max_length=2, choices=EXAM_TYPES, default='ue')
     booklet_number = models.CharField(max_length=100)
-    exam_start_time = models.TimeField
-    exam_end_time = models.TimeField
+    exam_start_time = models.TimeField()
+    exam_end_time = models.TimeField()
     signin_fingerprint = models.BinaryField()
-    signout_fingerprint = models.BinaryField()
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    signout_fingerprint = models.BinaryField(null=True)
+    biometric_data = models.ForeignKey(Biometric_data, on_delete=models.CASCADE)
+    # student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    programme = models.ForeignKey(Programme, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
-
     class Meta:
         db_table ="exam_attendace"
-
     def __str__(self):
-        return f"{self.user.username}'s {self.get_type_of_exam_display()} Exam Attendance"    
+        return f"{self.booklet_number}'s {self.get_type_of_exam_display()} Exam Attendance"    
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -258,7 +259,6 @@ class Student_course_work(models.Model):
     # staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
     course_work_value = models.FloatField()
     updated_at = models.DateTimeField(auto_now=True)
-
     class Meta:
         db_table = 'student_course_work'
     def __str__(self):

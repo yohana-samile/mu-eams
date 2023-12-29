@@ -1,16 +1,17 @@
 import json
 from django.contrib import messages
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 
 from django.db.models import Sum
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work, Exam_attendace
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import random
+from django.db.models import F
 
 # Create your views here.
 def index(request):
@@ -319,10 +320,6 @@ def programme_stracture(request):
 def register_my_course(request):
     return render(request, 'course/register_my_course.html')
 
-# exam_attendance, payment
-def exam_attendance(request):
-    return render(request, "exam/exam_attendance.html")
-
 def payment(request):
     if request.method == "POST":
         form = Payment_for_Student(request.POST)
@@ -347,7 +344,6 @@ def payment(request):
         'total_paid': total_paid
     }
     return render(request, 'payment/payment.html', context)
-from django.template.loader import render_to_string
 
 # student_cw
 def student_cw(request):
@@ -376,7 +372,11 @@ def student_cw(request):
         course_work_value = request.POST.get('course_work_value')
         programme_id = request.POST.get('programme_id')
         student_id = request.POST.get('student_id')
+        # for update cw value
         id = request.POST.get('id')
+        # to update c_code to all students
+        course = request.POST.get('course')
+        programmeId = request.POST.get('programmeId')
 
         # check if cw submitted 
         student_course_work_instance, created = Student_course_work.objects.get_or_create(
@@ -385,18 +385,24 @@ def student_cw(request):
             student_id=student_id,
         ) 
         student_course_work_instance.course_work_value = course_work_value
-        if created:
-            student_course_work_instance.id = id
-            student_course_work_instance.save()
         
+        # for update cw value
+        if not created:
+            student_course_work_instance.id = id
+        
+        # else:
+        Student_course_work.objects.filter(programme_id=programmeId).update(course=course)
+            # UPDATE `student_course_work` SET course ='css 111'
+        student_course_work_instance.save()
+
         student_course_work = Student_course_work.objects.all()
         success = {
             'success': True,     
             'course_id': student_course_work_instance.id,
             'updateCw': course_work_value,
+            'student_course_work': student_course_work
         }
-        return JsonResponse(success)
-
+        return JsonResponse(success)      
     else:
         context = {
             'programmes': Programme.objects.all(),
@@ -404,6 +410,36 @@ def student_cw(request):
         }
         template =  'cw/student_cw.html'
     return render(request, template, context)
+
+
+
+
+
+
+# exam_attendance, payment
+def exam_attendance(request):
+    if request.method == "GET" and 'unit_id' in request.GET:
+        unit_id = request.GET['unit_id']
+        depertments = Department.objects.filter(unit_id=unit_id).values('id', 'name')
+        return JsonResponse(list(depertments), safe=False)
+        # get programme
+    elif request.method == "GET" and 'department_id' in request.GET:
+        department_id = request.GET['department_id']
+        programmes = Programme.objects.filter(department_id=department_id).values('id', 'name')
+        return JsonResponse(list(programmes), safe=False)
+        # get course
+    elif request.method == "GET" and 'semester_id' in request.GET:
+        semester_id = request.GET['semester_id']
+        courses = Course.objects.filter(semester_id=semester_id).values('id', 'name')
+        return JsonResponse(list(courses), safe=False)
+    context = {
+        'examData': Exam_attendace.objects.all(),
+        'units': Unit.objects.all(),
+        'semesters': Semester.objects.all(),
+    }
+    template = "exam/exam_attendance.html"
+    return render(request, template, context)
+
 
 
 # logout

@@ -1,7 +1,16 @@
 {%load static %}
 {% include 'layout/layout.html' %}
     <div class="container">
-        <form action="" method="POST">
+        <ul style="list-style: none; display: inline-flex; ">
+            <li style="margin-right: 10px;">
+                <a href="" class="btn btn-success">New CW</a>
+            </li>
+
+            <li>
+                <a href="" class="btn btn-primary">History CW</a>
+            </li>
+        </ul>
+        <form action="" method="POST" class="my-4" id="submit-student-course-work">
             {% csrf_token %}
             <div class="form-group">
                 <select name="programme" id="programme" class="form-control">

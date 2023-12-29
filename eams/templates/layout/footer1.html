@@ -22,17 +22,7 @@
         </div>
         <!-- End of Page Wrapper -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            function hideMessage() {
-                var message_el = document.getElementById("message");
-                if (message_el) {
-                    setTimeout(function () {
-                        message_el.style.display = "none";
-                    }, 3000);
-                }
-            }
-            window.onload = hideMessage;            
-
+        <script>     
             // get student according to their programme of study
             $(document).ready(function (){
                 // console.log('Document ready');
@@ -40,7 +30,6 @@
                     // console.log('Programme change event');
                     var selectedProgrammeId = $(this).val();
                     var selectedStudentId = $(this).val();
-                    // var selectedCourseId = $(this).val();
 
                     // send ajax to retrieve data
                     $.ajax({
@@ -49,8 +38,6 @@
                         data: {
                             programme_id: selectedProgrammeId,
                             student_id: selectedStudentId,
-                            // course_id: selectedCourseId,
-                            // staff_id: {{ user_id }},
                         },
                         success: function (data) {
                             var studentsHtml = '';  // Initialize an empty string to store HTML content
@@ -69,12 +56,10 @@
                                 studentsHtml += '<td><form action="" id="submit_student_cw_form" method="post">';
                                 studentsHtml += '{% csrf_token %}';
                                 studentsHtml += '<input type="hidden" name="programme_id" value="' + selectedProgrammeId + '">';
-                                // studentsHtml += '<input type="hidden" name="course_id" value="' + data.students[i].course_id + '">';
                                 studentsHtml += '<input type="hidden" name="student_id" value="' + data.students[i].id + '">';
                                 studentsHtml += '<div class="form-group">';
                                 studentsHtml += '<input type="number" name="course_work_value" id="cw" placeholder="Enter CW" class="cw-input form-control" required>';
                                 studentsHtml += '</div>';
-                                // studentsHtml += '<input type="hidden" name="id" class="course_id form-control" value="' + data.students[i].course_id +' ">';
                                 studentsHtml += '<div class="form-group">';
                                 studentsHtml += '<input type="submit" value="Submit CW" class="submit-button primary form-control">';
                                 studentsHtml += '</div>';
@@ -153,15 +138,15 @@
                 $(document).on('click', '.submit-course-work', function(e){
                     e.preventDefault();
                     var courseCode = $('#course').val();
+                    var programmeId = $('#programme').val();
                     // var student_course_work = td.find('tr[name="student_course_work"']').val();
+                    console.log(programmeId);
+                    console.log(courseCode);
                     $.ajax({
                         url: '/eams/student_cw/',
                         type: 'POST',
                         data: {
-                            // course_work_value: '',
-                            // programme_id: '',
-                            // student_id: '',
-                            // id: '',
+                            programmeId: programmeId,
                             courseCode: courseCode,
                             csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
                         },
@@ -181,20 +166,16 @@
                 });
                 
             });
-
-            setTimeout(function (){
-                $('#alert').hide();
-            }, 3000);
-            $('#alert').on('click', 'button.close', function () {
-                $('#alert').hide();
-            });
         </script>
+        <!-- js -->
+        <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+        <script src="{% static 'js/eams.js' %}"></script>
 
         <!-- Scroll to Top Button-->
         <a class="scroll-to-top rounded" href="#page-top"> <i class="fas fa-angle-up"></i> </a>
 
         <!-- Bootstrap core JavaScript-->
-        <script src="{% static '/vendor/jquery/jquery.min.js' %}"></script>
+        <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
         <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
         <!-- Core plugin JavaScript-->

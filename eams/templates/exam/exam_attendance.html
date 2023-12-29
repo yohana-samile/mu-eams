@@ -1,4 +1,52 @@
 {%load static %}
 {% include 'layout/layout.html' %}
-
+    <div class="container">
+        <h2 class="text-center">Keep Exam Records</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select name="unit" class="form-control" id="unit">
+                            <option disabled selected hidden>Choose Unit</option>
+                            {% for unitData in units %}
+                                <option value="{{ unitData.id}}">{{ unitData.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="depertment" class="form-control" id="depertment" disabled>
+                            <option disabled selected hidden>Choose Depertment</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="programme" class="form-control" id="programmeOnExam" disabled>
+                            <option disabled selected hidden>Choose Programme</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- semester -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <select name="semester" class="form-control" id="semester">
+                            <option disabled selected hidden>Choose Semester</option>
+                            {% for semester in semesters %}
+                                <option value="{{ semester.id }}">{{ semester.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="course" class="form-control" id="course" disabled>
+                            <option disabled selected hidden>Choose Course</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- exam type -->
+            <!-- student -->
+            <div class="form-group">
+                <input type="submit" value="Submit" class="form-control primary" id="exam-attendence">
+            </div>
+        </form>
+    </div>
 {% include 'layout/footer1.html' %}

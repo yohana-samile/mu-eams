@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff
+from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Exam_attendace
 class FormUnit(forms.ModelForm):
     class Meta:
         model = Unit
@@ -69,3 +69,14 @@ class Payment_for_Student(forms.ModelForm):
     class Meta:
         model = Payment
         fields = ['amount', 'student']
+
+
+# exam attendence
+class Exam_attendace(forms.ModelForm):
+    class Meta:
+        model = Exam_attendace
+        fields = ['type_of_exam', 'exam_start_time', 'exam_end_time', 'booklet_number', 'biometric_data', 'programme', 'course']
+        widgets = {
+            'exam_start_time': forms.DateInput(attrs={'type': 'date'}),
+            'exam_end_time': forms.DateInput(attrs={'type': 'date'}),
+        }
