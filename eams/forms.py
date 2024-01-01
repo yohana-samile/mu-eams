@@ -70,13 +70,12 @@ class Payment_for_Student(forms.ModelForm):
         model = Payment
         fields = ['amount', 'student']
 
-
 # exam attendence
-class Exam_attendace(forms.ModelForm):
+class Exam_attendace_form(forms.ModelForm):
     class Meta:
         model = Exam_attendace
-        fields = ['type_of_exam', 'exam_start_time', 'exam_end_time', 'booklet_number', 'biometric_data', 'programme', 'course']
+        fields = ['type_of_exam', 'exam_start_time', 'exam_end_time']
         widgets = {
-            'exam_start_time': forms.DateInput(attrs={'type': 'date'}),
-            'exam_end_time': forms.DateInput(attrs={'type': 'date'}),
+            'exam_start_time': forms.DateInput(attrs={'type': 'time'}),
+            'exam_end_time': forms.DateInput(attrs={'type': 'time'}),
         }

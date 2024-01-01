@@ -1,12 +1,22 @@
-// function hideMessage() {
-//     var message_el = document.getElementById("message");
-//     if (message_el) {
-//         setTimeout(function () {
-//             message_el.style.display = "none";
-//         }, 3000);
-//     }
-// }
-// window.onload = hideMessage;            
+// alert dismisser
+setTimeout(function (){
+    $('#alert').hide();
+}, 3000);
+$('#alert').on('click', 'button.close', function () {
+    $('#alert').hide();
+});
+
+// hide messages
+function hideMessage() {
+    var message_el = document.getElementById("message");
+    if (message_el) {
+        setTimeout(function () {
+            message_el.style.display = "none";
+        }, 3000);
+    }
+}
+window.onload = hideMessage;
+
 
 // // get student according to their programme of study
 // $(document).ready(function (){
@@ -264,13 +274,14 @@ $(document).ready(function(){
     });
 
     // choose exam type and submit exam attendence record
-    $('#exam-attendence').on('submit', function (e) {
+    $('#exam_attendence_step1').on('submit', function (e) {
         e.preventDefault();
         $.ajax({
-            url: '{url "exam_attendece"}',
+            url: '/eams/exam_attendance',
             type: "POST",
-            data: $this.serialize(),
+            data: $(this).serialize(),
             success: function (response) {
+                document.getElementById("exam_attendence_step1").reset();
                 if (response.success) {
                     $('#alert').html('<div class="alert alert-success">Data Submitted Succssfully!</div>').show();
                 }
@@ -281,26 +292,48 @@ $(document).ready(function(){
             error: function (error) { 
                 $('#alert').html('<div class="alert alert-danger">Error in AJAX request ' + response.errors + '</div>').show();
             }
-        })
-    })
+        });
+        return false;
+    });
+
+    // update ex-status make and end
+    $('#update_exam_end_status').on('submit', function (e) {
+        e.preventDefault();
+        const response = confirm("Are you sure you want to end This Exam?");
+        if (response) {
+            $.ajax({
+                url: '/eams/exam_attendance',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    document.getElementById("update_exam_end_status").reset();
+                    if (response.success) {
+                        // alert('Exam End Successfully');
+                        $('#alert').html('<div class="alert alert-success">Exam End Successfully</div>').show();
+                    }
+                    else{
+                        $('#alert').html('<div class="alert alert-error">Error In Data Submission Try Again</div>').show();
+                    } 
+                },
+                error: function (error) {
+                    $('#alert').html('<div class="alert alert-danger">Error in AJAX request ' + response.errors + '</div>').show();
+                }
+            });
+        }
+    });
 });
 
-
-// alert dismisser
-setTimeout(function (){
-    $('#alert').hide();
-}, 3000);
-$('#alert').on('click', 'button.close', function () {
-    $('#alert').hide();
-});
-
-// hide messages
-function hideMessage() {
-    var message_el = document.getElementById("message");
-    if (message_el) {
-        setTimeout(function () {
-            message_el.style.display = "none";
-        }, 3000);
+// exam attendance step one and two
+function openExam(evt, examAction) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
     }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(examAction).style.display = "block";
+    evt.currentTarget.className += " active";
 }
-window.onload = hideMessage;  

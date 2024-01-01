@@ -1,52 +1,156 @@
+{%load django_bootstrap5 %}
 {%load static %}
 {% include 'layout/layout.html' %}
     <div class="container">
         <h2 class="text-center">Keep Exam Records</h2>
-        <form action="" method="post">
-            {% csrf_token %}
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <select name="unit" class="form-control" id="unit">
-                            <option disabled selected hidden>Choose Unit</option>
-                            {% for unitData in units %}
-                                <option value="{{ unitData.id}}">{{ unitData.name }}</option>
-                            {% endfor %}
-                        </select>
+        <div class="tab">
+            <button class="tablinks" onclick="openExam(event, 'register_exam')">Register Exam</button>
+            <button class="tablinks" onclick="openExam(event, 'exam_attendance')">Exam Attendance</button>
+            <button class="tablinks" onclick="openExam(event, 'attendance_history')">Attendance History</button>
+        </div>
+        <div id="register_exam" class="tabcontent">
+            <div id="alert" style="display:none;"></div>
+            <form action="" method="post" id="exam_attendence_step1">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <select name="unit" class="form-control" id="unit">
+                                <option disabled selected hidden>Choose Unit</option>
+                                {% for unitData in units %}
+                                    <option value="{{ unitData.id}}">{{ unitData.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select name="depertment" class="form-control" id="depertment" disabled>
+                                <option disabled selected hidden>Choose Depertment</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select name="programme" class="form-control" id="programmeOnExam" disabled>
+                                <option disabled selected hidden>Choose Programme</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <select name="depertment" class="form-control" id="depertment" disabled>
-                            <option disabled selected hidden>Choose Depertment</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <select name="programme" class="form-control" id="programmeOnExam" disabled>
-                            <option disabled selected hidden>Choose Programme</option>
-                        </select>
+                    <!-- semester -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <select name="semester" class="form-control" id="semester">
+                                <option disabled selected hidden>Choose Semester</option>
+                                {% for semester in semesters %}
+                                    <option value="{{ semester.id }}">{{ semester.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select name="course" class="form-control" id="course" disabled>
+                                <option disabled selected hidden>Choose Course</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <!-- semester -->
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <select name="semester" class="form-control" id="semester">
-                            <option disabled selected hidden>Choose Semester</option>
-                            {% for semester in semesters %}
-                                <option value="{{ semester.id }}">{{ semester.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <select name="course" class="form-control" id="course" disabled>
-                            <option disabled selected hidden>Choose Course</option>
-                        </select>
-                    </div>
+                <!-- exam type -->
+                {% bootstrap_form form %}
+                <input type="hidden" name="operation" value="insert">
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="form-control primary" >
                 </div>
-            </div>
-            <!-- exam type -->
+            </form>
+        </div>
+        
+        <!-- step two -->
+        <div id="exam_attendance" class="tabcontent">
             <!-- student -->
-            <div class="form-group">
-                <input type="submit" value="Submit" class="form-control primary" id="exam-attendence">
+            <div class="row bg-white col-md-4 d-flex justify-content-center">
+                <p class="text-center">143322080/T.21</p>
+                <div class="col-md-6">
+                    <label for="">in</label>
+                    <input type="checkbox" name="" id="">
+                </div>
+                <div class="col-md-6">
+                    <label for="">out</label>
+                    <input type="checkbox" name="" id="">
+                </div>
             </div>
-        </form>
+        </div>
+
+        <!-- step3 exam attendance history -->
+        <div id="attendance_history" class="tabcontent">
+            <div class="table-responsive">
+                exam attendance history
+                <div id="alert" style="display:none;"></div>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Exam Type</th>
+                            <th>Dep</th>
+                            <th>Prograame</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>E-start</th>
+                            <th>E-end</th>
+                            <th>E-Status</th>
+                            <th>Year</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Exam Type</th>
+                            <th>Dep</th>
+                            <th>Prograame</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>E-start</th>
+                            <th>E-end</th>
+                            <th>E-Status</th>
+                            <th>Year</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for exam_record in exam_records %}
+                            <tr>
+                                <td>{{ exam_record.type_of_exam }}</td>
+                                <td>{{ exam_record.department }}</td>
+                                <td>{{ exam_record.programme }}</td>
+                                <td>{{ exam_record.course }}</td>
+                                <td>{{ exam_record.semester }}</td>
+                                <td>{{ exam_record.exam_start_time }}</td>
+                                <td>{{ exam_record.exam_end_time }}</td>
+                                <td>
+                                    {% if exam_record.exam_status == 'on progress' %}
+                                       <div class="badge badge-primary">
+                                           {{ exam_record.exam_status }}</td>
+                                       </div>
+                                    {% else %}
+                                        <div class="badge badge-danger">
+                                            {{ exam_record.exam_status }}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ exam_record.created_at|date:'Y' }}</td>
+                                <td>
+                                    {% if exam_record.exam_status == 'on progress' %}
+                                        <form action="" method="post" id="update_exam_end_status">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="id" id="exam_attendance_id" value="{{exam_record.id}}">
+                                            <input type="hidden" name="exam_status" id="exam_status" value="end">
+                                            <input type="hidden" name="operation" value="update">
+                                            <button class="btn-sm btn btn-primary text-white">
+                                                <i class="fa fa-cog"></i>
+                                            </button>
+                                        </form> 
+                                    {% else %}
+                                        <i class="fa fa-check text-primary"></i>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% include 'layout/footer1.html' %}

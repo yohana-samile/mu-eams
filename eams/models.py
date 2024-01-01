@@ -93,7 +93,7 @@ class Course(models.Model):
     updated_at = models.DateTimeField(auto_now = True)
 
     def __str__(self):
-        return self.name
+        return self.code
     class Meta:
         db_table = "course"
     # END OF COURSE MODEL
@@ -207,22 +207,36 @@ class Exam_attendace(models.Model):
         ('t2', 'Test Two'),
     )
     type_of_exam = models.CharField(max_length=2, choices=EXAM_TYPES, default='ue')
-    booklet_number = models.CharField(max_length=100)
+    # booklet_number = models.CharField(max_length=100)
     exam_start_time = models.TimeField()
     exam_end_time = models.TimeField()
-    signin_fingerprint = models.BinaryField()
-    signout_fingerprint = models.BinaryField(null=True)
-    biometric_data = models.ForeignKey(Biometric_data, on_delete=models.CASCADE)
-    # student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    # signin_flag = models.BinaryField()
+    # signout_flag = models.BinaryField(null=True)
+    # biometric_data = models.ForeignKey(Biometric_data, on_delete=models.CASCADE)
     programme = models.ForeignKey(Programme, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+    exam_status = models.CharField(max_length=100, default='on progress')
     class Meta:
         db_table ="exam_attendace"
     def __str__(self):
-        return f"{self.booklet_number}'s {self.get_type_of_exam_display()} Exam Attendance"    
+        return f"{self.booklet_number}'s {self.get_type_of_exam_display()} Exam Attendance"   
 
+class Final_exam_attendence_record(models.Model):
+    exam_attendace = models.ForeignKey(Exam_attendace, on_delete=models.CASCADE)
+    booklet_number = models.CharField(max_length=100)
+    signin_flag = models.BinaryField()
+    signout_flag = models.BinaryField(null=True)
+    biometric_data = models.ForeignKey(Biometric_data, on_delete=models.CASCADE)
+    class Meta:
+        db_table = "final_exam_attendence_record"
+    def __str__(self):
+        return self.booklet_number
+
+# user profile
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     student = models.OneToOneField(Student, on_delete=models.CASCADE, null=True, blank=True)

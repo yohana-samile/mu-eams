@@ -1,11 +1,11 @@
 import json
 from django.contrib import messages
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 
 from django.db.models import Sum
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace_form
 # for fetching data
 from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work, Exam_attendace
 from django.contrib.auth.decorators import login_required
@@ -75,7 +75,6 @@ def unit(request):
         form = FormUnit(request.POST or None)
         if form.is_valid():
             form.save()
-
             messages.add_message(request, messages.INFO, "Success: Unit Added Successfully")
             return redirect('unit')
         else:
@@ -99,7 +98,6 @@ def depertment(request):
             formOfDep.save()
             messages.add_message(request, messages.INFO, "Success: Depertment Added Successfully")
             return redirect('depertment')
-
         else:
             messages.error(request, "Something Went Wrong Try Again")
             return redirect('depertment')
@@ -121,7 +119,6 @@ def year_of_study(request):
         form = FormYearOFStudy(request.POST or None)
         if form.is_valid():
             form.save()
-
             messages.add_message(request, messages.INFO, "Success: Year Added Successfully")
             return redirect('year_of_study')
         else:
@@ -140,7 +137,6 @@ def programme(request):
         form = FormProgramme(request.POST or None)
         if form.is_valid():
             form.save()
-
             messages.add_message(request, messages.INFO, "Success: Programme Added Successfully")
             return redirect('programme')
         else:
@@ -163,13 +159,11 @@ def education_level(request):
         form = FormEducationLevel(request.POST or None)
         if form.is_valid():
             form.save()
-
             messages.add_message(request, messages.INFO, "Success, New Education Level Added")
             return redirect('education_level')
         else:
             messages.add_message(request, messages.ERROR, "Something went wrong, Please try again.")
-            return redirect('education_level')
-        
+            return redirect('education_level')        
     else:
         form = FormEducationLevel()
         
@@ -337,7 +331,6 @@ def payment(request):
     student = Student.objects.get(user=user)
     payments = Payment.objects.filter(student=student)
     total_paid = payments.aggregate(total_paid_amount=Sum('amount'))['total_paid_amount'] or 0
-
     context = {
         'user': user,
         'payments': payments,
@@ -411,11 +404,6 @@ def student_cw(request):
         template =  'cw/student_cw.html'
     return render(request, template, context)
 
-
-
-
-
-
 # exam_attendance, payment
 def exam_attendance(request):
     if request.method == "GET" and 'unit_id' in request.GET:
@@ -430,16 +418,68 @@ def exam_attendance(request):
         # get course
     elif request.method == "GET" and 'semester_id' in request.GET:
         semester_id = request.GET['semester_id']
-        courses = Course.objects.filter(semester_id=semester_id).values('id', 'name')
-        return JsonResponse(list(courses), safe=False)
+        all_courses = Course.objects.filter(semester_id=semester_id).values('id', 'name')
+        submitted_course_ids = Exam_attendace.objects.filter(semester_id=semester_id).values_list('course_id', flat=True)
+        unsubmitted_courses = all_courses.exclude(id__in=submitted_course_ids)
+        return JsonResponse(list(unsubmitted_courses), safe=False)
+    
+        #submt exm attendence record 
+    elif request.method == "POST":
+        operation = request.POST.get('operation')
+        if operation == 'insert':
+            form = Exam_attendace_form(request.POST or None)
+            if form.is_valid():
+                exam_attendance_step1 = form.save(commit=False)
+
+                unit = request.POST.get('unit')
+                depertment = request.POST.get('depertment')
+                programme = request.POST.get('programme')
+                semester = request.POST.get('semester')
+                course = request.POST.get('course')
+
+                # assgn values
+                programme_instance = get_object_or_404(Programme, id=programme)
+                course_instance = get_object_or_404(Course, id=course)
+                semester_instance = get_object_or_404(Semester, id=semester)
+                depertment_instance = get_object_or_404(Department, id=depertment)
+
+                exam_attendance_step1.unit = unit
+                exam_attendance_step1.department = depertment_instance
+                exam_attendance_step1.programme = programme_instance
+                exam_attendance_step1.semester = semester_instance
+                exam_attendance_step1.course = course_instance
+                exam_attendance_step1.save()
+
+                # get exam attendance data
+                success = {'success': True}
+                return JsonResponse(success, safe=False)
+            else:
+                return JsonResponse({'success': False, 'error': form.errors})
+        # update
+        elif operation == 'update':
+            try:
+                id = int(request.POST.get('id'))
+                existing_record = get_object_or_404(Exam_attendace, id=id)
+                existing_record.exam_status = request.POST.get('exam_status')
+                existing_record.save()
+
+                # messages.add_message(request, messages.INFO, "Success, Exam Ended Successfully")
+                # template = "exam/exam_attendance.html"
+                # return redirect(request, template)
+                return JsonResponse({'success': True})
+            except Exception as e:
+                return JsonResponse({'success': False})
+    # else:
+    form = Exam_attendace_form()
     context = {
+        'form': form,
         'examData': Exam_attendace.objects.all(),
         'units': Unit.objects.all(),
         'semesters': Semester.objects.all(),
+        'exam_records': Exam_attendace.objects.order_by('-created_at'),
     }
     template = "exam/exam_attendance.html"
     return render(request, template, context)
-
 
 
 # logout
