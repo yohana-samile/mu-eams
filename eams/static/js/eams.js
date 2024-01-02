@@ -319,6 +319,58 @@ $(document).ready(function(){
                     $('#alert').html('<div class="alert alert-danger">Error in AJAX request ' + response.errors + '</div>').show();
                 }
             });
+            return false;
+        }
+    });
+
+    // return students based on course selected
+    $('#programme_id_on_exam').change(function () {
+        var selectedProgramme = $(this).val();
+        if (selectedProgramme) {
+            $('#submit_student').prop('disabled', false);
+            $.ajax({
+                url: '/eams/exam_attendance',
+                type: "GET",
+                data: {
+                    programme_id: selectedProgramme
+                },
+                success: function (data) {     
+                    $('#student-list').empty();
+                    for (var i = 0; i < data.length; i++) {
+                        $('#student-list').append(
+                            '<div class="card mb-3">' +
+                            '<div class="card-body">' +
+                            '<p class="text-center badge-primary">' + data[i].reg_number + '</p>' +
+                            '<div class="row">' +
+                            '<div class="col-md-4">' +
+                            '<label for="signin_flag">Sign In</label>' +
+                            '<input type="checkbox" name="signin_flag" id="signin_flag">' +
+                            '</div>' +
+                            '<div class="col-md-4">' +
+                            '<label for="signout_flag">Sign Out</label>' +
+                            '<input type="checkbox" name="signout_flag" id="signout_flag">' +
+                            '</div>' +
+                            '<div class="col-md-4">' +
+                            '<h4>Biometric <span  class="text-primary"> True</span></h4></label>' +
+                            '</div>'+
+                            '</div>' +
+                            '<div class="form-group">' +
+                            '<label for="booklet_number">Booklate Number</label>' +
+                            '<input type="text" placeholder="Booklate Number" class="form-control" name="booklet_number" id="booklet_number">' +
+                            '</div>' +
+                            '</div>' +
+                            '</div>'
+                        );
+                    }
+                    
+                },
+                error: function (error) {
+                    console.log('error in ajax');
+                }
+            });
+        }
+        else{
+            $('#submit_student').prop('disabled', true).val('');
         }
     });
 });

@@ -153,7 +153,6 @@ class Student(models.Model):
     class Meta:
         db_table = "student"
     def __str__(self):
-        # return f"{self.reg_number}"
         return self.reg_number
     
 class Staff(models.Model):
@@ -207,12 +206,8 @@ class Exam_attendace(models.Model):
         ('t2', 'Test Two'),
     )
     type_of_exam = models.CharField(max_length=2, choices=EXAM_TYPES, default='ue')
-    # booklet_number = models.CharField(max_length=100)
     exam_start_time = models.TimeField()
     exam_end_time = models.TimeField()
-    # signin_flag = models.BinaryField()
-    # signout_flag = models.BinaryField(null=True)
-    # biometric_data = models.ForeignKey(Biometric_data, on_delete=models.CASCADE)
     programme = models.ForeignKey(Programme, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)

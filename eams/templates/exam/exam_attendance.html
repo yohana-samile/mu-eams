@@ -59,20 +59,27 @@
             </form>
         </div>
         
-        <!-- step two -->
+        <!-- step two student-->
         <div id="exam_attendance" class="tabcontent">
-            <!-- student -->
-            <div class="row bg-white col-md-4 d-flex justify-content-center">
-                <p class="text-center">143322080/T.21</p>
-                <div class="col-md-6">
-                    <label for="">in</label>
-                    <input type="checkbox" name="" id="">
+            <form action="" method="post" id="update_student_who_attend_exam">
+                {% csrf_token %}
+                <div class="form-group">
+                    <select name="programme_id_on_exam" class="form-control" id="programme_id_on_exam">
+                        <option hidden selected choosen>Choose Programme</option>
+                        {% for programme_id in programme_ids %}
+                            <option value="{{ programme_id.id }}">{{ programme_id.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="col-md-6">
-                    <label for="">out</label>
-                    <input type="checkbox" name="" id="">
+                <div id="student-list"></div>
+                <!-- student populated from above course -->
+                <div class="form-group">
+                    <input type="hidden" name="operation" value="submit_student_who_attende_exam">
                 </div>
-            </div>
+                <div class="form-group">
+                    <input type="submit" value="submit" class="form-control primary" id="submit_student" disabled>
+                </div>
+            </form>
         </div>
 
         <!-- step3 exam attendance history -->

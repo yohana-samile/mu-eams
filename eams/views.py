@@ -1,10 +1,11 @@
-import json
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 
 from django.db.models import Sum
+
+from eams.admin import User
 from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace_form
 # for fetching data
 from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work, Exam_attendace
@@ -466,17 +467,24 @@ def exam_attendance(request):
                 # messages.add_message(request, messages.INFO, "Success, Exam Ended Successfully")
                 # template = "exam/exam_attendance.html"
                 # return redirect(request, template)
-                return JsonResponse({'success': True})
+                return JsonResponse({'success': True}, safe=False)
             except Exception as e:
                 return JsonResponse({'success': False})
+    # student_who_can_attend
+    elif request.method == "GET" and 'programme_id' in request.GET:
+        programme_id = request.GET['programme_id']
+        student_list = Student.objects.filter(programme_id=programme_id).values('reg_number')  
+        return JsonResponse(list(student_list), safe=False)
     # else:
     form = Exam_attendace_form()
+    programme_ids = Programme.objects.filter(id__in=Exam_attendace.objects.filter(exam_status='on progress').values_list('programme_id', flat=True)).distinct()
     context = {
         'form': form,
         'examData': Exam_attendace.objects.all(),
         'units': Unit.objects.all(),
         'semesters': Semester.objects.all(),
         'exam_records': Exam_attendace.objects.order_by('-created_at'),
+        'programme_ids': programme_ids,
     }
     template = "exam/exam_attendance.html"
     return render(request, template, context)
