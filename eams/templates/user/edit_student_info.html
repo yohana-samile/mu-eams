@@ -1,0 +1,16 @@
+{% load django_bootstrap5 %}
+{% load static %}
+{% include 'layout/layout.html' %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold">Update Student Info</h6>
+        <div id="alert"></div>
+        <form action="" method="post" id="update_student_info" class="my-3">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="form-group">
+                <input type="submit" value="Update" class="form-control primary">
+            </div>
+        </form>
+    </div>
+{% include 'layout/footer1.html' %}

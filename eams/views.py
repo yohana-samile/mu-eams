@@ -6,13 +6,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
 
 from eams.admin import User
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace_form
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace_form, Biometric_data_form, Final_exam_attendence_record_form
 # for fetching data
-from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work, Exam_attendace
+from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work, Exam_attendace, Biometric_data, Final_exam_attendence_record
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import random
 from django.db.models import F
+from .utils import get_final_exam_attendence_record_model
 
 # Create your views here.
 def index(request):
@@ -241,7 +242,8 @@ def student(request):
         'form':form,
         'all_dep': Department.objects.all(),
         'all_prog': Programme.objects.all(),
-        'students': Student.objects.all(),
+        'students': Student.objects.select_related('user').all(),
+        'fingers': Biometric_data.objects.select_related('student').all(),
     }
     return render(request, 'user/student.html', context)
 
@@ -424,7 +426,23 @@ def exam_attendance(request):
         unsubmitted_courses = all_courses.exclude(id__in=submitted_course_ids)
         return JsonResponse(list(unsubmitted_courses), safe=False)
     
-        #submt exm attendence record 
+    # student_who_can_attend
+    elif request.method == "GET" and 'programme_id' in request.GET:
+        programme_id = request.GET['programme_id']
+        student_list = list(Student.objects.filter(programme_id=programme_id).values('reg_number'))
+        return JsonResponse(student_list, safe=False)
+
+    # finilize Exam_attendace submission by chech if fingerprint match
+    elif request.method == 'GET' and 'reg_number' in request.GET:
+        reg_number = request.GET.get('reg_number')
+        try:
+            student = Student.objects.get(reg_number=reg_number)
+        except Student.DoesNotExist:
+            return JsonResponse({'reg_number_exists': False, 'fingerprint_match': False})
+        fingerprint_match_exists = Biometric_data.objects.filter(student=student).exists()
+        return JsonResponse({'reg_number_exists': True, 'fingerprint_match': fingerprint_match_exists})
+
+    #submt exm attendence record 
     elif request.method == "POST":
         operation = request.POST.get('operation')
         if operation == 'insert':
@@ -455,7 +473,7 @@ def exam_attendance(request):
                 success = {'success': True}
                 return JsonResponse(success, safe=False)
             else:
-                return JsonResponse({'success': False, 'error': form.errors})
+                return JsonResponse({'success': False, 'error': form.errors}, safe=False)
         # update
         elif operation == 'update':
             try:
@@ -463,18 +481,49 @@ def exam_attendance(request):
                 existing_record = get_object_or_404(Exam_attendace, id=id)
                 existing_record.exam_status = request.POST.get('exam_status')
                 existing_record.save()
-
-                # messages.add_message(request, messages.INFO, "Success, Exam Ended Successfully")
-                # template = "exam/exam_attendance.html"
-                # return redirect(request, template)
                 return JsonResponse({'success': True}, safe=False)
             except Exception as e:
-                return JsonResponse({'success': False})
-    # student_who_can_attend
-    elif request.method == "GET" and 'programme_id' in request.GET:
-        programme_id = request.GET['programme_id']
-        student_list = Student.objects.filter(programme_id=programme_id).values('reg_number')  
-        return JsonResponse(list(student_list), safe=False)
+                return JsonResponse({'success': False}, safe=False)
+            
+        # finilize Exam_attendace submission
+        elif operation == "submit_student_who_attende_exam":
+            reg_number = request.POST.get('reg_number')
+            booklet_number = request.POST.get('booklet_number')
+            signin_flag = request.POST.get('signin_flag')
+            # biometric_data = request.POST.get('biometric_data')
+            biometric_data = 1
+            
+            try:
+                student = Student.objects.get(reg_number=reg_number)
+            except Student.DoesNotExist:
+                return JsonResponse({'success': False, 'error_message': 'Student not found.'}, safe=False)
+            
+            fingerprint_match_exists = Biometric_data.objects.get(fingerprint=biometric_data)
+            if fingerprint_match_exists:
+                student = Student.objects.get(reg_number=reg_number)
+                student_programme = student.programme_id
+                if student_programme is not None:
+                    programme_id_value = student_programme
+                    exam_attend = Exam_attendace.objects.filter(programme_id=programme_id_value).first()
+                    if exam_attend is not None:
+                        exam_attend_id_value = exam_attend
+                        biometry = fingerprint_match_exists
+                        attendance = get_final_exam_attendence_record_model().objects.create(
+                            booklet_number = booklet_number,
+                            signin_flag=signin_flag.encode(),
+                            biometric_data=biometry,
+                            exam_attendace= exam_attend_id_value,
+                        )
+                        attendance.save()
+                        success = {'success': True}
+                        return JsonResponse(success, safe=False)                        
+                    else:
+                        return JsonResponse({'success': False, 'error_message': 'Exam attendance not found.'}, safe=False)
+            else:
+                return JsonResponse({'success': False, 'error_message': 'Fingerprint does not match.'}, safe=False)
+        else:
+            return JsonResponse({'success': False, 'error_message': 'Form is not valid.'}, safe=False)
+
     # else:
     form = Exam_attendace_form()
     programme_ids = Programme.objects.filter(id__in=Exam_attendace.objects.filter(exam_status='on progress').values_list('programme_id', flat=True)).distinct()
@@ -490,6 +539,38 @@ def exam_attendance(request):
     return render(request, template, context)
 
 
+# edit student info and update biometric data
+def edit_student_info(request, id):
+    user_student = get_object_or_404(Student, id=id)
+    if request.method == "GET":
+        context = {'form': StudentForm(instance=user_student), 'id':id}
+        tamplete = "user/edit_student_info.html"
+        return render(request, tamplete, context)
+    elif request.method == "POST":
+        user_student_form = StudentForm(request.POST, instance=user_student)
+        if user_student_form.is_valid():
+           user_student_form.save()
+        return JsonResponse({'success': True}, safe=False)
+
+# update biometric data
+def edit_and_add_student_fingerprint(request, id):
+    user_student = get_object_or_404(Student, id=id)
+    if request.method == "GET":
+        finger_data = Biometric_data.objects.filter(student=id)
+        context = {
+            'finger': finger_data
+        }
+        tamplete = "user/edit_and_add_student_fingerprint.html"
+        return render(request, tamplete, context)
+    elif request.method == "POST":
+        fingerprint = request.POST.get('fingerprint')
+        # biometric_data_form = Biometric_data_form({ 'fingerprint': fingerprint, 'student': user_student.id })
+        biometric_data_form = Biometric_data_form({ 'fingerprint': fingerprint, 'student': user_student.id })
+        if biometric_data_form.is_valid():
+            biometric_data_form.save()
+        else:
+            return JsonResponse({'success': False}, safe=False)
+        return JsonResponse({'success': True}, safe=False)
 # logout
 # def logout(request):
 #     auth.logout(request)

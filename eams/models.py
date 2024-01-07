@@ -222,7 +222,7 @@ class Exam_attendace(models.Model):
 
 class Final_exam_attendence_record(models.Model):
     exam_attendace = models.ForeignKey(Exam_attendace, on_delete=models.CASCADE)
-    booklet_number = models.CharField(max_length=100)
+    booklet_number = models.CharField(max_length=100, null=True)
     signin_flag = models.BinaryField()
     signout_flag = models.BinaryField(null=True)
     biometric_data = models.ForeignKey(Biometric_data, on_delete=models.CASCADE)

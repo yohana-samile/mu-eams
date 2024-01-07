@@ -5,62 +5,106 @@
     <div class="card-header py-3">
         <div class="row">
             <div class="col-md-6">
-                <h6 class="m-0 font-weight-bold">Student Registered</h6>
+                <div class="tab">
+                    <button class="tablinks" onclick="openStudentBiometric(event, 'all_student')">All Students</button>
+                    <button class="tablinks" onclick="openStudentBiometric(event, 'Student_Biometric')">Student Biometric</button>
+                </div>
             </div>
             <div class="col-md-6">
                 <a href="javaScript:void" data-toggle="modal" data-target="#student_modal" class="btn primary float-right">Add Student <i class="fa fa-plus"></i></a>
             </div>
         </div>
     </div>
-    {% include 'resource/messages.html' %}
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Sur Name</th>
-                        <th>Email</th>
-                        <th>Regstration Number</th>
-                        <th>Programme</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Sur Name</th>
-                        <th>Email</th>
-                        <th>Regstration Number</th>
-                        <th>Programme</th>
-                        <th>Action</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    {% for student in students %}
+    <div id="all_student" class="tabcontent">
+        {% include 'resource/messages.html' %}
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
                         <tr>
-                            <td>{{ student.first_name }}</td>
-                            <td>{{ student.last_name }}</td>
-                            <td>{{ student.email }}</td>
-                            <td>{{ student.reg_number }}</td>
-                            <td>{{ student.programme }}</td>
-                            <td>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <i class="fa fa-eye text-primary"></i>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <i class="fa fa-edit text-primary"></i>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <i class="fa fa-trash text-danger"></i>
-                                    </div>
-                                </div>
-                            </td>
+                            <th>#</th>
+                            <th>First Name</th>
+                            <th>Sur Name</th>
+                            <th>Email</th>
+                            <th>Regstration Number</th>
+                            <th>Programme</th>
+                            <th>Action</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>#</th>
+                            <th>First Name</th>
+                            <th>Sur Name</th>
+                            <th>Email</th>
+                            <th>Regstration Number</th>
+                            <th>Programme</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ student.user.first_name }}</td>
+                                <td>{{ student.user.last_name }}</td>
+                                <td>{{ student.user.email }}</td>
+                                <td>{{ student.reg_number }}</td>
+                                <td>{{ student.programme }}</td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <a href="{% url 'edit_and_add_student_fingerprint' student.id %}" class="decoration-none"><i class="fa fa-eye text-primary"></i></a>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <a href="{% url 'edit_student_info'  student.id %}" data-student-id="{{ student.id }}" class="decoration-none"><i class="fa fa-edit text-primary"></i></a>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student_Biometric -->
+    <div id="Student_Biometric" class="tabcontent">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Regstration Number</th>
+                            <th>Programme</th>
+                            <th>Biometric</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>#</th>
+                            <th>Regstration Number</th>
+                            <th>Programme</th>
+                            <th>Biometric</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for finger in fingers %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ finger.student.reg_number }}</td>
+                                <td>{{ finger.student.programme }}</td>
+                                <td>True <i class="fa fa-check text-primary"></i></td>    
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

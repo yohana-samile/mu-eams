@@ -39,6 +39,8 @@ urlpatterns = [
     path("payment", views.payment, name="payment"),
     # path("student_cw", views.student_cw, name="student_cw")
     path('student_cw/', student_cw, name='student_cw'),
-
+    # edit student info and update biometric data
+    path('edit_student_info/<int:id>/', views.edit_student_info, name="edit_student_info"),
+    path('edit_and_add_student_fingerprint/<int:id>/', views.edit_and_add_student_fingerprint, name="edit_and_add_student_fingerprint")
 # ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -308,7 +308,6 @@ $(document).ready(function(){
                 success: function (response) {
                     document.getElementById("update_exam_end_status").reset();
                     if (response.success) {
-                        // alert('Exam End Successfully');
                         $('#alert').html('<div class="alert alert-success">Exam End Successfully</div>').show();
                     }
                     else{
@@ -323,55 +322,184 @@ $(document).ready(function(){
         }
     });
 
+    // Function to get CSRF token from the cookie
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Check if the cookie name matches the desired token name
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }  
+
     // return students based on course selected
     $('#programme_id_on_exam').change(function () {
         var selectedProgramme = $(this).val();
         if (selectedProgramme) {
             $('#submit_student').prop('disabled', false);
+            $('#search_input').prop('disabled', false);
             $.ajax({
                 url: '/eams/exam_attendance',
                 type: "GET",
                 data: {
                     programme_id: selectedProgramme
                 },
-                success: function (data) {     
+                success: function (data) {
                     $('#student-list').empty();
                     for (var i = 0; i < data.length; i++) {
+                        // Create a unique form ID for each student
+                        var formId = 'student-form-' + i;
                         $('#student-list').append(
+                            '<form action="" method="post" id="' + formId + '">' +
                             '<div class="card mb-3">' +
                             '<div class="card-body">' +
                             '<p class="text-center badge-primary">' + data[i].reg_number + '</p>' +
+                            '<div id="alert-' + formId + '"></div>' +
                             '<div class="row">' +
                             '<div class="col-md-4">' +
                             '<label for="signin_flag">Sign In</label>' +
-                            '<input type="checkbox" name="signin_flag" id="signin_flag">' +
+                            '<input type="checkbox" name="signin_flag" id="signin_flag" required>' +
                             '</div>' +
                             '<div class="col-md-4">' +
                             '<label for="signout_flag">Sign Out</label>' +
                             '<input type="checkbox" name="signout_flag" id="signout_flag">' +
                             '</div>' +
                             '<div class="col-md-4">' +
-                            '<h4>Biometric <span  class="text-primary"> True</span></h4></label>' +
-                            '</div>'+
+                            '<p>Biometric <span  class="text-danger"> False</span></p></label>' +
+                            '</div>' +
                             '</div>' +
                             '<div class="form-group">' +
                             '<label for="booklet_number">Booklate Number</label>' +
-                            '<input type="text" placeholder="Booklate Number" class="form-control" name="booklet_number" id="booklet_number">' +
+                            '<input type="text" placeholder="Enter Booklate Number" class="form-control" name="booklet_number" id="booklet_number" required>' +
+                            '<input type="hidden" value="' + data[i].reg_number + '" class="form-control" name="reg_number" id="reg_number" required>' +
+                            '</div>' +
+                            '<div class="form-group">' +
+                            '<input type="hidden" name="operation" value="submit_student_who_attende_exam">' +
+                            '<input type="hidden" name="csrfmiddlewaretoken" value="' + getCookie('csrftoken') + '">' +
+                            '<input type="submit" value="submit" class="form-control primary" id="submit_student" onclick="submitForm(\'' + formId + '\')">' + 
                             '</div>' +
                             '</div>' +
-                            '</div>'
+                            '</div>' +
+                            '</form>'
                         );
                     }
-                    
+                    $('form').submit(function (e) {
+                        e.preventDefault();
+                        var currentFormId = $(this).attr('id');
+                        $.ajax({
+                            url: $(this).attr('action'),
+                            type: 'POST',
+                            data: $(this).serialize(),
+                            success: function (response) {
+                                $('#alert-' + currentFormId).html('<p class="alert alert-success">Submitted successfully</p>').show();
+                            },
+                            error: function (error) {
+                                $('#alert-' + currentFormId).html('<p class="alert alert-danger">error in form submission</p>').show();
+                            }
+                        });
+                    });
                 },
-                error: function (error) {
-                    console.log('error in ajax');
+                error: function () {
+                    $('#alert-' + currentFormId).html('<p class="alert alert-danger">error in ajax</p>').show();
                 }
             });
-        }
-        else{
+            return false;
+        } else {
             $('#submit_student').prop('disabled', true).val('');
+            $('#search_input').prop('disabled', true).val('');
         }
+    });
+
+    // update_student_who_attend_exam submt
+    $('#update_student_who_attend_exam').on('submit', function (e) {
+        e.preventDefault();
+        // var form =   $(this).serialize();
+        $.ajax({
+            url: "/eams/exam_attendance",
+            type: "GET",
+            data: { 
+                reg_number: $('#reg_number').val(),
+                // csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            // headers: {'X-CSRFToken': csrftoken},  // Include CSRF token in headers
+            success: function (data) {
+                if (data.reg_number_exists && data.fingerprint_match) {
+                    $('#alert').html('<p class="alert alert-success">submited successfully</p>').show();
+                    // Proceed with form submission
+                    // $.ajax({
+                    //     url: "/eams/exam_attendance",
+                    //     type: "POST",
+                    //     data: $('#update_student_who_attend_exam').serialize(),
+                    //     success: function (data) {
+                    //         // Handle the response from the server after form submission
+                    //         console.log("data");
+                    //     },
+                    //     error: function (insertDataError) {
+                    //         console.log('Error submitting form data:', insertDataError);
+                    //         // Handle error if needed
+                    //     }
+                    // });  
+                    $('#update_student_who_attend_exam').off('submit').submit();
+            
+                } 
+                else {
+                    var confirmSubmission = confirm('Registration number does not match or fingerprint does not match. Do you still want to submit the form?');
+                    // If user confirms, proceed with form submission
+                    if (confirmSubmission) {
+                        $('#update_student_who_attend_exam').submit();
+                    } 
+                }
+            },
+            error: function (error){
+                console.log('Error in ajax');
+            }
+        });
+        return false;
+    });
+
+
+    // update_student_info
+    $('#update_student_info').on('submit', function (e) {
+        e.preventDefault();
+        var csrftoken = getCookie('csrftoken');
+        formData = $(this).serialize();
+        $.ajax({
+            url:  $('#update_student_info').attr("data-url"),
+            type: "POST",
+            data: formData,
+            headers: {'X-CSRFToken': csrftoken},  // Include CSRF token in headers
+            success: function (data) {
+                $('#alert').html('<p class="alert alert-success">Information Updated Successfully</p>').show()
+            }, 
+            error: function (error) {
+                console.log('Ajax Error');
+            }
+        });
+        return false;
+    });
+    
+        // student_finger_info
+    $('#student_finger_info').on('submit', function (e) {
+        e.preventDefault();
+        formData = $(this).serialize();
+        $.ajax({
+            url: $('#student_finger_info').attr('data-url'),
+            type: "POST",
+            data: formData, 
+            success: function (data) {
+                $('#alert').html('<p class="alert alert-success">Fingerprint Registered</p>').show();
+            },
+            error: function (error) {
+                console.log('error in ajax');
+            }
+        });
     });
 });
 
@@ -387,5 +515,20 @@ function openExam(evt, examAction) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
     document.getElementById(examAction).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+// Student_Biometric
+function openStudentBiometric(evt, biometricAction) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(biometricAction).style.display = "block";
     evt.currentTarget.className += " active";
 }

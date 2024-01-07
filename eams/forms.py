@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Exam_attendace
+from .models import Unit, Department, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Exam_attendace, Biometric_data, Final_exam_attendence_record
 class FormUnit(forms.ModelForm):
     class Meta:
         model = Unit
@@ -79,3 +79,14 @@ class Exam_attendace_form(forms.ModelForm):
             'exam_start_time': forms.DateInput(attrs={'type': 'time'}),
             'exam_end_time': forms.DateInput(attrs={'type': 'time'}),
         }
+
+# add Biometric_data
+class Biometric_data_form(forms.ModelForm):
+    class Meta:
+        model = Biometric_data
+        fields = ['fingerprint', 'student']
+
+class Final_exam_attendence_record_form(forms.ModelForm):
+    class Meta:
+        model = Final_exam_attendence_record
+        fields = ['booklet_number', 'biometric_data', 'exam_attendace']

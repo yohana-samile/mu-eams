@@ -71,15 +71,17 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div id="student-list"></div>
+                <div class="form-group">
+                    <input type="search" class="form-control" placeholder="search by regstration number" id="search_input" disabled>
+                </div>
                 <!-- student populated from above course -->
                 <div class="form-group">
                     <input type="hidden" name="operation" value="submit_student_who_attende_exam">
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="submit" class="form-control primary" id="submit_student" disabled>
                 </div>
             </form>
+            <div id="student-list"></div>
         </div>
 
         <!-- step3 exam attendance history -->
