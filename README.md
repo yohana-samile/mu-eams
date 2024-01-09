@@ -6,6 +6,14 @@ REG NO: 14322080/T.21 this is my final year project
 
 TITLE: "Mzumbe University Exam Attendance Management System, Using Biometric Fingerprint Scanner (MU-EAMS)"
 
+
+
+Technology used 
+
+Django Python Framework, Javascript, MySql, Bootstrap-4
+
+
+
 Explanation About This Title:
 
 In our University, there is an issue where students face difficulty signing attendance during the examination period. Therefore, I need to create a system that will assist a student in being able to sign their attendance when they take an exam. Specifically, they would sign "IN" when they enter and "OUT" when they exit through the use of fingerprint (Biometric). Additionally, if a student hasn't completed their tuition fee payment, they should not be able to sign "IN" and "OUT". Problem Statement:
@@ -42,3 +50,7 @@ e. Security Protocols: Implement encryption, access controls, and other security
 Therefore By achieving these objectives, the proposed system will revolutionise the examination attendance management process at Mzumbe University, enhancing efficiency, accuracy, and overall security.
 
 Below screshoot showing the system
+
+login page 
+
+file:///home/king/Pictures/Screenshots/Screenshot%20from%202024-01-09%2008-39-24.png
