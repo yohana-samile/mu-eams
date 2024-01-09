@@ -6,7 +6,8 @@
         <div class="tab">
             <button class="tablinks" onclick="openExam(event, 'register_exam')">Register Exam</button>
             <button class="tablinks" onclick="openExam(event, 'exam_attendance')">Exam Attendance</button>
-            <button class="tablinks" onclick="openExam(event, 'attendance_history')">Attendance History</button>
+            <button class="tablinks" onclick="openExam(event, 'exam_attendance_history')">Exam Attendance History</button>
+            <button class="tablinks" onclick="openExam(event, 'student_attendance_history')">Student Attendance History</button>
         </div>
         <div id="register_exam" class="tabcontent">
             <div id="alert" style="display:none;"></div>
@@ -85,7 +86,7 @@
         </div>
 
         <!-- step3 exam attendance history -->
-        <div id="attendance_history" class="tabcontent">
+        <div id="exam_attendance_history" class="tabcontent">
             <div class="table-responsive">
                 exam attendance history
                 <div id="alert" style="display:none;"></div>
@@ -160,6 +161,45 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- student who attend exam student_attendance_history -->
+        <div id="student_attendance_history"  class="tabcontent">
+            <form action="" method="GET" id="form_student_attendance_history">
+                {% csrf_token %}
+                <div class="form-group">
+                    <select name="get_programme_to_student" class="form-control" id="get_programme_to_student">
+                        <option selected hidden disabled> Select Prograame</option>
+                        {% for programme_id in programme_ids %}
+                            <option value="{{ programme_id.id }}">{{ programme_id.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+            <div class="table-responsive">
+                student who attend exam attendance history
+                <div id="alert" style="display:none;"></div>
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <tr>
+                        <th>Exam Type</th>
+                        <th>Prograame</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Student</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Exam Type</th>
+                        <th>Prograame</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Student</th>
+                    </tr>
+                </tfoot>
+                <tbody id="student_history_data">
+                </tbody>
+            </table>
         </div>
     </div>
 {% include 'layout/footer1.html' %}

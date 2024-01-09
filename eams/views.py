@@ -14,6 +14,7 @@ from django.utils import timezone
 import random
 from django.db.models import F
 from .utils import get_final_exam_attendence_record_model
+from django.core.serializers import serialize
 
 # Create your views here.
 def index(request):
@@ -489,7 +490,8 @@ def exam_attendance(request):
         elif operation == "submit_student_who_attende_exam":
             reg_number = request.POST.get('reg_number')
             booklet_number = request.POST.get('booklet_number')
-            signin_flag = request.POST.get('signin_flag')
+            signin_flag = request.POST.get('signin_flag') == 'on'
+            signout_flag = request.POST.get('signout_flag') == 'on'
             # biometric_data = request.POST.get('biometric_data')
             biometric_data = 1
             
@@ -508,13 +510,14 @@ def exam_attendance(request):
                     if exam_attend is not None:
                         exam_attend_id_value = exam_attend
                         biometry = fingerprint_match_exists
-                        attendance = get_final_exam_attendence_record_model().objects.create(
-                            booklet_number = booklet_number,
-                            signin_flag=signin_flag.encode(),
-                            biometric_data=biometry,
-                            exam_attendace= exam_attend_id_value,
+                        attendance, created = Final_exam_attendence_record.objects.get_or_create(
+                            booklet_number=booklet_number,
+                            defaults={'signin_flag': signin_flag, 'signout_flag': signout_flag, 'biometric_data': biometry, 'exam_attendace': exam_attend_id_value}
                         )
-                        attendance.save()
+                        if not created:
+                            # If the record already exists, update the signout_flag
+                            attendance.signout_flag = signout_flag
+                            attendance.save()
                         success = {'success': True}
                         return JsonResponse(success, safe=False)                        
                     else:
@@ -523,6 +526,14 @@ def exam_attendance(request):
                 return JsonResponse({'success': False, 'error_message': 'Fingerprint does not match.'}, safe=False)
         else:
             return JsonResponse({'success': False, 'error_message': 'Form is not valid.'}, safe=False)
+        
+    # get student who attend exam
+    elif request.method == "GET" and 'get_programme_to_student' in request.GET:
+        programme_id = request.GET['get_programme_to_student']
+        programme_to_take = Exam_attendace.objects.filter(programme_id=programme_id).first()
+        student_historys = list(Final_exam_attendence_record.objects.order_by('-id').filter(exam_attendace=programme_to_take.id))
+        serialized_data = serialize('json', student_historys)
+        return JsonResponse(serialized_data, safe=False)
 
     # else:
     form = Exam_attendace_form()

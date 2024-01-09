@@ -365,14 +365,14 @@ $(document).ready(function(){
                             '<div class="row">' +
                             '<div class="col-md-4">' +
                             '<label for="signin_flag">Sign In</label>' +
-                            '<input type="checkbox" name="signin_flag" id="signin_flag" required>' +
+                            '<input type="checkbox" name="signin_flag" id="signin_flag" value="on" required>' +
                             '</div>' +
                             '<div class="col-md-4">' +
                             '<label for="signout_flag">Sign Out</label>' +
-                            '<input type="checkbox" name="signout_flag" id="signout_flag">' +
+                            '<input type="checkbox" name="signout_flag" id="signout_flag" value="on">' +
                             '</div>' +
                             '<div class="col-md-4">' +
-                            '<p>Biometric <span  class="text-danger"> False</span></p></label>' +
+                            '<p>Biometric <span class="biometric-status text-danger">False</span></p></label>' +
                             '</div>' +
                             '</div>' +
                             '<div class="form-group">' +
@@ -390,6 +390,7 @@ $(document).ready(function(){
                             '</form>'
                         );
                     }
+                    $('#' + currentFormId + ' #submit_student').prop('disabled', true);
                     $('form').submit(function (e) {
                         e.preventDefault();
                         var currentFormId = $(this).attr('id');
@@ -398,13 +399,34 @@ $(document).ready(function(){
                             type: 'POST',
                             data: $(this).serialize(),
                             success: function (response) {
+                                $('#' + currentFormId + ' #submit_student').prop('disabled', true);
                                 $('#alert-' + currentFormId).html('<p class="alert alert-success">Submitted successfully</p>').show();
                             },
                             error: function (error) {
                                 $('#alert-' + currentFormId).html('<p class="alert alert-danger">error in form submission</p>').show();
                             }
                         });
+
+                        // Additional code to handle signout_flag
+                        $('#' + currentFormId + ' #signout_flag').on('change', function() {
+                            if ($(this).prop('checked')) {
+                                // Disable and check the signin_flag checkbox
+                                $('#' + currentFormId + ' #signin_flag').prop('disabled', true).prop('checked', true);
+                                // Enable the signout_flag checkbox
+                                $('#' + currentFormId + ' #signout_flag').prop('disabled', false);
+                            } else {
+                                // Enable the signin_flag checkbox
+                                $('#' + currentFormId + ' #signin_flag').prop('disabled', false);
+                            }
+                        });
                     });
+                    // Disable and check the signin_flag checkbox
+                    $('#' + currentFormId + ' #signin_flag').prop('disabled', true).prop('checked', true);
+                    // Enable the signout_flag checkbox
+                    $('#' + currentFormId + ' #signout_flag').prop('disabled', false);
+                    // Update the biometric status based on the signout_flag checkbox
+                    var biometricStatus = $('#' + currentFormId + ' #signout_flag').prop('checked') ? 'True' : 'False';
+                    $('#' + currentFormId + ' .biometric-status').text(biometricStatus).removeClass('text-danger').addClass('text-success');
                 },
                 error: function () {
                     $('#alert-' + currentFormId).html('<p class="alert alert-danger">error in ajax</p>').show();
@@ -415,6 +437,45 @@ $(document).ready(function(){
             $('#submit_student').prop('disabled', true).val('');
             $('#search_input').prop('disabled', true).val('');
         }
+    });
+
+    // student_attendance_history
+    $('#get_programme_to_student').change(function (e) {
+        e.preventDefault();
+        var programme_to_student = $(this).val();
+        $.ajax({
+            url: '/eams/exam_attendance',
+            type: 'GET',
+            data: {get_programme_to_student: programme_to_student},
+            success: function (data) {
+                $('#student_history_data').empty();
+                console.log(data);
+                if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        $('#student_history_data').append(
+                            '<tr>' +
+                            '<td>' + data[i].booklet_number + '</td>' +
+                            '<td>' + data[i].signin_flag + '</td>' +
+                            '<td>' + data[i].signout_flag + '</td>' +
+                            '<td>' + data[i].biometric_data + '</td>' +
+                            '<td>' + data[i].exam_attendace + '</td>' +
+                            '</tr>'
+                        );
+                    }
+                }
+                else {
+                    $('#student_history_data').append(
+                        '<tr><td colspan="10">No data available</td></tr>'
+                    );
+                }
+            },
+            error: function () {
+                $('#student_history_data').empty();
+                $('#student_history_data').append(
+                    '<tr><td colspan="10">Error fetching data</td></tr>'
+                );
+            }
+        });
     });
 
     // update_student_who_attend_exam submt
@@ -464,7 +525,6 @@ $(document).ready(function(){
         return false;
     });
 
-
     // update_student_info
     $('#update_student_info').on('submit', function (e) {
         e.preventDefault();
@@ -485,7 +545,7 @@ $(document).ready(function(){
         return false;
     });
     
-        // student_finger_info
+    // student_finger_info
     $('#student_finger_info').on('submit', function (e) {
         e.preventDefault();
         formData = $(this).serialize();
