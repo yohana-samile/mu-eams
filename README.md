@@ -52,5 +52,5 @@ Therefore By achieving these objectives, the proposed system will revolutionise 
 Below screshoot showing the system
 
 login page 
+![login-page](https://github.com/yohana-samile/mu-eams/assets/99715781/53cf2213-d978-44f7-b5b1-cad96507badd)
 
-file:///home/king/Pictures/Screenshots/Screenshot%20from%202024-01-09%2008-39-24.png
