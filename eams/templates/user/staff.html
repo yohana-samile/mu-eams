@@ -1,5 +1,9 @@
 {%load static %}
 {% include 'layout/layout.html' %}
+<div class="container">
+    {% include '../breadcrumb.html' %}
+</div>
+
 <!-- Staff data -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -40,23 +44,33 @@
                 <tbody>
                     {% for staff in staffs %}
                         <tr>
-                            <td>{{staff.first_name}} {{staff.last_name}}</td>
-                            <td>{{staff.email}}</td>
-                            <td>{{staff.unit}}</td>
+                            <td>{{staff.user.first_name}} {{staff.user.last_name}}</td>
+                            <td>{{staff.user.email}}</td>
+                            <td>{{staff.department}}</td>
                             <td class=" text-center">
-                                <div class="badge badge-primary">
-                                    {{staff.is_staff}} <i class="fa fa-check"></i></td>
-                                </div>
+                                <small>
+                                    <div class="badge badge-primary">
+                                        {{staff.is_staff}} <i class="fa fa-check"></i>
+                                    </div>
+                                </small>
+                            </td>
                             <td>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <i class="fa fa-eye text-primary"></i>
+                                        <small>
+                                            <i class="fa fa-eye text-primary"></i>
+                                        </small>
+                                    </div>
+                                    
+                                    <div class="col-md-4">
+                                        <small>
+                                            <i class="fa fa-edit text-primary"></i>
+                                        </small>
                                     </div>
                                     <div class="col-md-4">
-                                        <i class="fa fa-edit text-primary"></i>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <i class="fa fa-trash text-danger"></i>
+                                        <small>
+                                            <i class="fa fa-trash text-danger"></i>
+                                        </small>
                                     </div>
                                 </div>
                             </td>

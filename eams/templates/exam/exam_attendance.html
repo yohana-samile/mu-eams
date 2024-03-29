@@ -1,6 +1,9 @@
 {%load django_bootstrap5 %}
 {%load static %}
 {% include 'layout/layout.html' %}
+<div class="container">
+    {% include '../breadcrumb.html' %}
+</div>
     <div class="container">
         <h2 class="text-center">Keep Exam Records</h2>
         <div class="tab">
@@ -82,7 +85,16 @@
                 <div class="form-group">
                 </div>
             </form>
-            <div id="student-list"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Sing In</h4>
+                    <div id="student-list"></div>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="float-right text-center">Sign Out</h4>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, nostrum soluta! Deserunt, repellendus vel facere voluptatibus doloremque quibusdam sequi! Quisquam accusantium libero ratione? Reiciendis, debitis totam vitae obcaecati molestias provident.</p>
+                </div>
+            </div>
         </div>
 
         <!-- step3 exam attendance history -->
