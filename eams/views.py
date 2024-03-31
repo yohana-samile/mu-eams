@@ -16,6 +16,7 @@ from django.db.models import F
 from .utils import get_final_exam_attendence_record_model
 from django.core.serializers import serialize
 
+
 # Create your views here.
 def index(request):
     if request.method == "POST":
@@ -584,9 +585,14 @@ def edit_and_add_student_fingerprint(request, id):
             return JsonResponse({'success': False}, safe=False)
         return JsonResponse({'success': True}, safe=False)
     
+
 # exam_attendance_step_two
 def exam_attendance_step_two(request):
-    programme_ids = Programme.objects.all()
+    programme_ids = Programme.objects.filter(
+        exam_attendace__exam_status='on progress'
+    ).values('name', 'id').distinct()
+    
+    # programme_ids = Programme.objects.all()
     # student_who_can_attend
     if request.method == "GET" and 'programme_id' in request.GET:
         programme_id = request.GET['programme_id']
