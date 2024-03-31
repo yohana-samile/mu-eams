@@ -96,16 +96,23 @@
                         <i class="fas fa-fw fa-book-open"></i>
                         <span>Student Course Work</span></a>
                 </li>
+                
+                <!-- Examination -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'exam_attendance' %}">
-                        <i class="fas fa-fw fa-book"></i>
-                        <span>Exam Attendance</span></a>
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExamination"
+                        aria-expanded="true" aria-controls="collapseExamination">
+                        <i class="fas fa-fw fa-book-open"></i>
+                        <span>Exam Attendance</span>
+                    </a>
+                    <div id="collapseExamination" class="collapse" aria-labelledby="headingUtilities"
+                        data-parent="#accordionSidebar">
+                        <div class="collapse-inner rounded" style="background-color: #002E3B;">
+                            <a class="collapse-item text-white" href="{% url 'exam_attendance' %}">Examination Record</a>
+                            <a class="collapse-item text-white" href="{% url 'exam_attendance_step_two' %}">Keep Attendance</a>
+                        </div>
+                    </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'exam_attendance_step_two' %}">
-                        <i class="fas fa-fw fa-book"></i>
-                        <span>exam_attendance_step_two</span></a>
-                </li>
+
                  <!-- USERS -->
                  <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
