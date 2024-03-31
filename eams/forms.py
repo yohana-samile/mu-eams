@@ -90,3 +90,8 @@ class Final_exam_attendence_record_form(forms.ModelForm):
     class Meta:
         model = Final_exam_attendence_record
         fields = ['booklet_number', 'biometric_data', 'exam_attendace']
+        
+# class SignInForm(forms.Form):
+    # reg_number = forms.CharField(max_length=100)
+    # booklet_number = forms.CharField(max_length=100)
+    # fingerprint = forms.CharField(max_length=100)

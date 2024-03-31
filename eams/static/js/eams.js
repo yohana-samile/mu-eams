@@ -339,7 +339,6 @@ $(document).ready(function(){
         return cookieValue;
     }  
 
-    
 
     // student_attendance_history
     $('#get_programme_to_student').change(function (e) {
@@ -381,51 +380,51 @@ $(document).ready(function(){
     });
 
     // update_student_who_attend_exam submt
-    $('#update_student_who_attend_exam').on('submit', function (e) {
-        e.preventDefault();
-        // var form =   $(this).serialize();
-        $.ajax({
-            url: "/eams/exam_attendance",
-            type: "GET",
-            data: { 
-                reg_number: $('#reg_number').val(),
-                // csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            // headers: {'X-CSRFToken': csrftoken},  // Include CSRF token in headers
-            success: function (data) {
-                if (data.reg_number_exists && data.fingerprint_match) {
-                    $('#alert').html('<p class="alert alert-success">submited successfully</p>').show();
-                    // Proceed with form submission
-                    // $.ajax({
-                    //     url: "/eams/exam_attendance",
-                    //     type: "POST",
-                    //     data: $('#update_student_who_attend_exam').serialize(),
-                    //     success: function (data) {
-                    //         // Handle the response from the server after form submission
-                    //         console.log("data");
-                    //     },
-                    //     error: function (insertDataError) {
-                    //         console.log('Error submitting form data:', insertDataError);
-                    //         // Handle error if needed
-                    //     }
-                    // });  
-                    $('#update_student_who_attend_exam').off('submit').submit();
+    // $('#update_student_who_attend_exam').on('submit', function (e) {
+    //     e.preventDefault();
+    //     // var form =   $(this).serialize();
+    //     $.ajax({
+    //         url: "/eams/exam_attendance",
+    //         type: "GET",
+    //         data: { 
+    //             reg_number: $('#reg_number').val(),
+    //             // csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+    //         },
+    //         // headers: {'X-CSRFToken': csrftoken},  // Include CSRF token in headers
+    //         success: function (data) {
+    //             if (data.reg_number_exists && data.fingerprint_match) {
+    //                 $('#alert').html('<p class="alert alert-success">submited successfully</p>').show();
+    //                 // Proceed with form submission
+    //                 // $.ajax({
+    //                 //     url: "/eams/exam_attendance",
+    //                 //     type: "POST",
+    //                 //     data: $('#update_student_who_attend_exam').serialize(),
+    //                 //     success: function (data) {
+    //                 //         // Handle the response from the server after form submission
+    //                 //         console.log("data");
+    //                 //     },
+    //                 //     error: function (insertDataError) {
+    //                 //         console.log('Error submitting form data:', insertDataError);
+    //                 //         // Handle error if needed
+    //                 //     }
+    //                 // });  
+    //                 $('#update_student_who_attend_exam').off('submit').submit();
             
-                } 
-                else {
-                    var confirmSubmission = confirm('Registration number does not match or fingerprint does not match. Do you still want to submit the form?');
-                    // If user confirms, proceed with form submission
-                    if (confirmSubmission) {
-                        $('#update_student_who_attend_exam').submit();
-                    } 
-                }
-            },
-            error: function (error){
-                console.log('Error in ajax');
-            }
-        });
-        return false;
-    });
+    //             } 
+    //             else {
+    //                 var confirmSubmission = confirm('Registration number does not match or fingerprint does not match. Do you still want to submit the form?');
+    //                 // If user confirms, proceed with form submission
+    //                 if (confirmSubmission) {
+    //                     $('#update_student_who_attend_exam').submit();
+    //                 } 
+    //             }
+    //         },
+    //         error: function (error){
+    //             console.log('Error in ajax');
+    //         }
+    //     });
+    //     return false;
+    // });
 
     // update_student_info
     $('#update_student_info').on('submit', function (e) {
@@ -463,7 +462,108 @@ $(document).ready(function(){
             }
         });
     });
+
+    
+    // selected student to attende exam based on their programme
+    $(document).ready(function() {
+        $('#programme_id_on_exam').change(function() {
+            var programmeId = $(this).val(); // Get the selected programme ID
+            $.ajax({
+                url: 'http://127.0.0.1:8000/eams/exam_attendance_step_two/', // Update the URL to include the full path
+                method: 'GET',
+                data: {
+                    programme_id: programmeId
+                },
+                success: function(response) {
+                    $('#search_input').prop('disabled', false); // Enable search input field
+                    console.log(response);
+                    // Clear previous data
+                    $('.list_of_student.sign_in').empty();
+                    $('.list_of_student.sign_out').empty();
+                    // Populate the list of students for sign in
+                    var signInList = '';
+                    response.forEach(function(regNumber) {
+                        signInList += '<div class="card">';
+                        signInList += '<div class="card-header">';
+                        signInList += '<p class="text-center">' + regNumber + '</p>';
+                        signInList += '</div>';
+                        signInList += '<div class="card-body">';
+                        signInList += '<form action="{% url "submit_signout_student" %}" method="post">';
+                        signInList += '{% csrf_token %}';
+                        signInList += '<div class="form-group">';
+                        signInList += '<label for="fingerprint">Click To Attach Fingerprint</label>';
+                        signInList += '<input type="text" name="biometric_data" id="biometric_data_id" placeholder="Enter biometric_data_id" class="form-control" value="1">';
+                        signInList += '<input type="text" name="reg_number" id="reg_number" placeholder="Enter reg_number" class="form-control" value="' + regNumber + '">';
+                        signInList += '</div>';
+                        signInList += '<input type="submit" class="form-control primary" value="Submit">';
+                        signInList += '</form>';
+                        signInList += '</div>';
+                        signInList += '</div>';
+                        signInList += '<br>';
+                    });
+                    $('.list_of_student.sign_in').html(signInList);
+    
+                    // Populate the list of students for sign out
+                    var signOutList = '';
+                    response.forEach(function(regNumber) {
+                        signOutList += '<div class="card">';
+                        signOutList += '<div class="card-header">';
+                        signOutList += '<p class="text-center">' + regNumber + '</p>';
+                        signOutList += '</div>';
+                        signOutList += '<div class="card-body">';
+                        signOutList += '<form action="{% url "submit_signout_student" %}" method="post">';
+                        signOutList += '{% csrf_token %}';
+                        signOutList += '<div class="form-group">';
+                        signOutList += '<label for="fingerprint">Click To Attach Fingerprint</label>';
+                        signOutList += '<input type="text" name="biometric_data" id="biometric_data_id" placeholder="Enter biometric_data_id" class="form-control" value="1">';
+                        signOutList += '<input type="text" name="reg_number" id="reg_number" placeholder="Enter reg_number" class="form-control" value="' + regNumber + '">';
+                        signOutList += '</div>';
+                        signOutList += '<input type="submit" class="form-control primary" value="Submit">';
+                        signOutList += '</form>';
+                        signOutList += '</div>';
+                        signOutList += '</div>';
+                        signOutList += '<br>';
+                    });
+                    $('.list_of_student.sign_out').html(signOutList);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    });
+    
+
+
+    $('#sign_in_form').on('submit', function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        submitForm(formData,  '{% url "submit_signin_student" %}');
+    });
+
+    $('#sign_out_form').on('submit', function(e) {
+        e.preventDefault();
+        var formData = $(this).serialize();
+        submitForm(formData, '/exam/submit_signout_student', 'Sign Out');
+    });
+
+    function submitForm(formData, url, action) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            success: function(data) {
+                $('#alert').html('<p class="alert alert-success">' + action + ' Successful</p>').show();
+            },
+            error: function(xhr, status, error) {
+                var response = JSON.parse(xhr.responseText);
+                $('#alert').html('<p class="alert alert-danger">' + response.errors + '</p>').show();
+            }
+        });
+    }
 });
+
+
 
 // exam attendance step one and two
 function openExam(evt, examAction) {

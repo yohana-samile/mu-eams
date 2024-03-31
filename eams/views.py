@@ -562,6 +562,7 @@ def edit_student_info(request, id):
         if user_student_form.is_valid():
            user_student_form.save()
         return JsonResponse({'success': True}, safe=False)
+    
 
 # update biometric data
 def edit_and_add_student_fingerprint(request, id):
@@ -582,6 +583,111 @@ def edit_and_add_student_fingerprint(request, id):
         else:
             return JsonResponse({'success': False}, safe=False)
         return JsonResponse({'success': True}, safe=False)
+    
+# exam_attendance_step_two
+def exam_attendance_step_two(request):
+    # student_who_can_attend
+    if request.method == "GET" and 'programme_id' in request.GET:
+        programme_id = request.GET['programme_id']
+        list_of_student = list(Student.objects.filter(programme_id=programme_id).values('reg_number'))
+        return JsonResponse(list_of_student, safe=False)
+    
+    # Fetch students who have signed in but not signed out yet
+    students_signed_in_not_signed_out = Student.objects.filter(
+        biometric_data__final_exam_attendence_record__signout_flag=0
+    ).distinct()
+
+    # Fetch students who have not signed in yet
+    students_not_signed_in_yet = Student.objects.exclude(
+        biometric_data__final_exam_attendence_record__signout_flag=0
+    )
+    programme_ids = Programme.objects.all()
+    context = {
+        'students_signed_in_not_signed_out': students_signed_in_not_signed_out,
+        'students_not_signed_in_yet': students_not_signed_in_yet,
+        'programme_ids': programme_ids,
+        'template': 'exam/exam_attendance_step_two.html',
+    }
+    return render(request, context['template'], context)
+
+# submit_signin_student
+def submit_signin_student(request):
+    if request.method == 'POST':
+        # form = SignInForm(request.POST)
+        # if form.is_valid():            
+            reg_number = request.POST.get('reg_number')
+            booklet_number = request.POST.get('booklet_number') #this value comes from forms.py
+            signin_flag = request.POST.get('signin_flag')
+            biometric_data = request.POST.get('biometric_data')
+            
+            try:
+                student = Student.objects.get(reg_number=reg_number)
+            except Student.DoesNotExist:
+                return JsonResponse({'success': False, 'error_message': 'Student not found.'}, safe=False)
+            
+            fingerprint_match_exists = Biometric_data.objects.get(fingerprint=biometric_data)
+            if fingerprint_match_exists:
+                student = Student.objects.get(reg_number=reg_number)
+                student_programme = student.programme_id
+                if student_programme is not None:
+                    programme_id_value = student_programme
+                    exam_attend = Exam_attendace.objects.filter(programme_id=programme_id_value).first()
+                    if exam_attend is not None:
+                        exam_attend_id_value = exam_attend
+                        biometry = fingerprint_match_exists
+                        attendance, created = Final_exam_attendence_record.objects.get_or_create(
+                            booklet_number=booklet_number,
+                            defaults={'signout_flag': 0, 'signin_flag': signin_flag, 'biometric_data': biometry, 'exam_attendace': exam_attend_id_value}
+                        )
+                        attendance.save()
+                        success = {'success': True}
+                        return JsonResponse(success, safe=False)                        
+                    else:
+                        return JsonResponse({'success': False, 'error_message': 'Exam attendance not found.'}, safe=False)
+            else:
+                return JsonResponse({'success': False, 'error_message': 'Fingerprint does not match.'}, safe=False)
+        # else:
+        #     return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+        
+# submit_signout_student
+def submit_signout_student(request):
+    if request.method == 'POST':
+        reg_number = request.POST.get('reg_number')
+        biometric_data = request.POST.get('biometric_data')        
+        
+        try:
+            student = Student.objects.get(reg_number=reg_number)
+        except Student.DoesNotExist:
+            return JsonResponse({'success': False, 'error_message': 'Student not found.'}, safe=False)
+        
+        try:
+            fingerprint_match = Biometric_data.objects.get(fingerprint=biometric_data)
+        except Biometric_data.DoesNotExist:
+            return JsonResponse({'success': False, 'error_message': 'Biometric data not found.'}, status=400)
+        
+        if fingerprint_match.student != student:
+            return JsonResponse({'success': False, 'error_message': 'Biometric data does not match the student.'}, status=400)
+        
+        exam_attendance = Exam_attendace.objects.filter(programme_id=student.programme_id).first()
+        if not exam_attendance:
+            return JsonResponse({'success': False, 'error_message': 'Exam attendance not found for student.'}, status=400)
+        
+        final_attendance_record = Final_exam_attendence_record.objects.filter(
+            biometric_data=fingerprint_match,
+            exam_attendace=exam_attendance,
+            signout_flag=False
+        ).first()
+
+        if not final_attendance_record:
+            return JsonResponse({'success': False, 'error_message': 'No active attendance record found.'}, status=400)
+                
+        final_attendance_record.signout_flag = True
+        final_attendance_record.save()
+                
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False, 'error_message': 'Invalid request method.'}, status=400)
+
 # logout
 # def logout(request):
 #     auth.logout(request)

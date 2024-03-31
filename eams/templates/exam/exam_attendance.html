@@ -63,40 +63,6 @@
             </form>
         </div>
         
-        <!-- step two student-->
-        <div id="exam_attendance" class="tabcontent">
-            <form action="" method="post" id="update_student_who_attend_exam">
-                {% csrf_token %}
-                <div class="form-group">
-                    <select name="programme_id_on_exam" class="form-control" id="programme_id_on_exam">
-                        <option hidden selected choosen>Choose Programme</option>
-                        {% for programme_id in programme_ids %}
-                            <option value="{{ programme_id.id }}">{{ programme_id.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <input type="search" class="form-control" placeholder="search by regstration number" id="search_input" disabled>
-                </div>
-                <!-- student populated from above course -->
-                <div class="form-group">
-                    <input type="hidden" name="operation" value="submit_student_who_attende_exam">
-                </div>
-                <div class="form-group">
-                </div>
-            </form>
-            <div class="row">
-                <div class="col-md-6">
-                    <h4>Sing In</h4>
-                    <div id="student-list"></div>
-                </div>
-                <div class="col-md-6">
-                    <h4 class="float-right text-center">Sign Out</h4>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium, nostrum soluta! Deserunt, repellendus vel facere voluptatibus doloremque quibusdam sequi! Quisquam accusantium libero ratione? Reiciendis, debitis totam vitae obcaecati molestias provident.</p>
-                </div>
-            </div>
-        </div>
-
         <!-- step3 exam attendance history -->
         <div id="exam_attendance_history" class="tabcontent">
             <div class="table-responsive">

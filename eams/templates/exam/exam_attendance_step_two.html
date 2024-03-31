@@ -1,0 +1,48 @@
+{% load django_bootstrap5 %}
+{%load static %}
+{% include 'layout/layout.html' %}
+<div class="container">
+    {% include '../breadcrumb.html' %}
+</div>
+
+<div class="container">
+    <form id="student_who_can_attend_exam">
+        {% csrf_token %}
+        <div class="form-group">
+            <select name="programme_id" class="form-control" id="programme_id_on_exam">
+                <option hidden selected choosen>Choose Programme</option>
+                {% for programme_id in programme_ids %}
+                    <option value="{{ programme_id.id }}">{{ programme_id.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="search" class="form-control" placeholder="search by regstration number" id="search_input" disabled>
+        </div>
+        <!-- student populated from above course -->
+        <div class="form-group">
+            <input type="hidden" name="operation" value="submit_student_who_attende_exam">
+        </div>
+        <div class="form-group">
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Sing In</h4>
+            <div class="form-group">
+                <div class="signInList"></div>
+            </div>
+            <br>
+        </div>
+
+        <div class="col-md-6">
+            <h4 class="float-right text-center">Sign Out</h4>
+            <div class="form-group">
+                <div class="signOutList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% include 'layout/footer1.html' %}
