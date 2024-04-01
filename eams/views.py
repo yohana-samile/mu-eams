@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
 
 from eams.admin import User
-from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace_form, Biometric_data_form, Final_exam_attendence_record_form
+from .forms import FormDepertment, FormUnit, FormYearOFStudy, FormProgramme, FormEducationLevel, FormSemester, FormCourse, StudentForm, SemesterRegistrationForm, Payment_for_Student, StaffForm, Exam_attendace_form, Biometric_data_form
 # for fetching data
 from eams.models import Department, Unit, Year_of_study, Programme, Education_level, Semester, Course, Student, SemesterRegistration, Payment, Staff, Student_course_work, Exam_attendace, Biometric_data, Final_exam_attendence_record
 from django.contrib.auth.decorators import login_required
@@ -427,22 +427,6 @@ def exam_attendance(request):
         submitted_course_ids = Exam_attendace.objects.filter(semester_id=semester_id).values_list('course_id', flat=True)
         unsubmitted_courses = all_courses.exclude(id__in=submitted_course_ids)
         return JsonResponse(list(unsubmitted_courses), safe=False)
-    
-    # student_who_can_attend
-    elif request.method == "GET" and 'programme_id' in request.GET:
-        programme_id = request.GET['programme_id']
-        student_list = list(Student.objects.filter(programme_id=programme_id).values('reg_number'))
-        return JsonResponse(student_list, safe=False)
-
-    # finilize Exam_attendace submission by chech if fingerprint match
-    elif request.method == 'GET' and 'reg_number' in request.GET:
-        reg_number = request.GET.get('reg_number')
-        try:
-            student = Student.objects.get(reg_number=reg_number)
-        except Student.DoesNotExist:
-            return JsonResponse({'reg_number_exists': False, 'fingerprint_match': False})
-        fingerprint_match_exists = Biometric_data.objects.filter(student=student).exists()
-        return JsonResponse({'reg_number_exists': True, 'fingerprint_match': fingerprint_match_exists})
 
     #submt exm attendence record 
     elif request.method == "POST":
@@ -487,46 +471,6 @@ def exam_attendance(request):
             except Exception as e:
                 return JsonResponse({'success': False}, safe=False)
             
-        # finilize Exam_attendace submission
-        elif operation == "submit_student_who_attende_exam":
-            reg_number = request.POST.get('reg_number')
-            booklet_number = request.POST.get('booklet_number')
-            signin_flag = request.POST.get('signin_flag') == 'on'
-            signout_flag = request.POST.get('signout_flag') == 'on'
-            # biometric_data = request.POST.get('biometric_data')
-            biometric_data = 1
-            
-            try:
-                student = Student.objects.get(reg_number=reg_number)
-            except Student.DoesNotExist:
-                return JsonResponse({'success': False, 'error_message': 'Student not found.'}, safe=False)
-            
-            fingerprint_match_exists = Biometric_data.objects.get(fingerprint=biometric_data)
-            if fingerprint_match_exists:
-                student = Student.objects.get(reg_number=reg_number)
-                student_programme = student.programme_id
-                if student_programme is not None:
-                    programme_id_value = student_programme
-                    exam_attend = Exam_attendace.objects.filter(programme_id=programme_id_value).first()
-                    if exam_attend is not None:
-                        exam_attend_id_value = exam_attend
-                        biometry = fingerprint_match_exists
-                        attendance, created = Final_exam_attendence_record.objects.get_or_create(
-                            booklet_number=booklet_number,
-                            defaults={'signin_flag': signin_flag, 'signout_flag': signout_flag, 'biometric_data': biometry, 'exam_attendace': exam_attend_id_value}
-                        )
-                        if not created:
-                            # If the record already exists, update the signout_flag
-                            attendance.signout_flag = signout_flag
-                            attendance.save()
-                        success = {'success': True}
-                        return JsonResponse(success, safe=False)                        
-                    else:
-                        return JsonResponse({'success': False, 'error_message': 'Exam attendance not found.'}, safe=False)
-            else:
-                return JsonResponse({'success': False, 'error_message': 'Fingerprint does not match.'}, safe=False)
-        else:
-            return JsonResponse({'success': False, 'error_message': 'Form is not valid.'}, safe=False)
         
     # get student who attend exam
     elif request.method == "GET" and 'get_programme_to_student' in request.GET:
@@ -592,7 +536,6 @@ def exam_attendance_step_two(request):
         exam_attendace__exam_status='on progress'
     ).values('name', 'id').distinct()
     
-    # programme_ids = Programme.objects.all()
     # student_who_can_attend
     if request.method == "GET" and 'programme_id' in request.GET:
         programme_id = request.GET['programme_id']
@@ -694,6 +637,51 @@ def submit_signout_student(request):
         return JsonResponse({'success': True})
     else:
         return JsonResponse({'success': False, 'error_message': 'Invalid request method.'}, status=400)
+
+
+# examination_attendence_history
+def examination_attendence_history(request):
+    programme_ids = Programme.objects.all()
+
+    # if 'get_programme_to_student' in request.GET:
+    #     selected_programme_id = request.GET['get_programme_to_student']
+    #     attendence_history = Final_exam_attendence_record.objects.select_related(
+    #         'exam_attendace__programme', 'biometric_data__student'
+    #     ).filter(
+    #         exam_attendace__programme_id=selected_programme_id
+    #     ).values(
+    #         'exam_attendace__type_of_exam',
+    #         'exam_attendace__exam_status',
+    #         'exam_attendace__created_at',
+    #         'exam_attendace__programme__programme_abbrevation',
+    #         'booklet_number',
+    #         'signin_flag',
+    #         'signout_flag',
+    #         'biometric_data__student__reg_number',
+    #         'biometric_data__id'
+    #     ).order_by('-exam_attendace__created_at')
+    # else:
+    #     attendence_history = []
+
+    attendence_history = Final_exam_attendence_record.objects.select_related('exam_attendace__programme', 'biometric_data__student').values(
+        'exam_attendace__type_of_exam', 
+        'exam_attendace__exam_status', 
+        'exam_attendace__created_at', 
+        'exam_attendace__programme__programme_abbrevation', 
+        'booklet_number', 
+        'signin_flag', 
+        'signout_flag', 
+        'biometric_data__student__reg_number', 
+        'biometric_data__id'
+    ).order_by('-exam_attendace__created_at')
+    
+    template = 'exam/examination-attendence-history.html'
+    context = {
+        'attendence_history': attendence_history,
+        'template': template,
+        'programme_ids': programme_ids
+    }
+    return render(request, template, context)
 
 # logout
 # def logout(request):

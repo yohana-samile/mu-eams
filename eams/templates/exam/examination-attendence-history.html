@@ -1,0 +1,64 @@
+{% load django_bootstrap5 %}
+{%load static %}
+{% include 'layout/layout.html' %}
+<div class="container">
+    {% include '../breadcrumb.html' %}
+
+    <form id="form_student_attendance_history">
+        {% csrf_token %}
+        <div class="form-group">
+            <select name="get_programme_to_student" class="form-control" id="get_programme_to_student">
+                <option selected hidden disabled> Select Prograame</option>
+                {% for programme_id in programme_ids %}
+                    <option value="{{ programme_id.id }}">{{ programme_id.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+    <div class="table-responsive">
+        student who attend exam 
+        <div id="alert" style="display:none;"></div>
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Exam Type</th>
+                    <th>Prograame</th>
+                    <th>signin_flag</th>
+                    <th>signout_flag</th>
+                    <th>Exam Status</th>
+                    <th>Booklate Number</th>
+                    <th>Reg Number</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>#</th>
+                    <th>Exam Type</th>
+                    <th>Prograame</th>
+                    <th>signin_flag</th>
+                    <th>signout_flag</th>
+                    <th>Exam Status</th>
+                    <th>Booklate Number</th>
+                    <th>Reg Number</th>
+                </tr>
+            </tfoot>
+            <!-- <tbody id="student_history_data"> -->
+            <tbody>
+                {% for attendance in attendence_history %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ attendance.exam_attendace__type_of_exam }}</td>
+                        <td>{{ attendance.exam_attendace__programme__programme_abbrevation }}</td>
+                        <td>{{ attendance.signin_flag }}</td>
+                        <td>{{ attendance.signout_flag }}</td>
+                        <td>{{ attendance.exam_attendace__exam_status }}</td>
+                        <td>{{ attendance.booklet_number }}</td>
+                        <td>{{ attendance.biometric_data__student__reg_number }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include 'layout/footer1.html' %}

@@ -340,46 +340,6 @@ $(document).ready(function(){
     }  
 
 
-    // student_attendance_history
-    $('#get_programme_to_student').change(function (e) {
-        e.preventDefault();
-        var programme_to_student = $(this).val();
-        $.ajax({
-            url: '/eams/exam_attendance',
-            type: 'GET',
-            data: {get_programme_to_student: programme_to_student},
-            success: function (data) {
-                $('#student_history_data').empty();
-                console.log(data);
-                if (data.length > 0) {
-                    for (var i = 0; i < data.length; i++) {
-                        $('#student_history_data').append(
-                            '<tr>' +
-                            '<td>' + data[i].booklet_number + '</td>' +
-                            '<td>' + data[i].signin_flag + '</td>' +
-                            '<td>' + data[i].signout_flag + '</td>' +
-                            '<td>' + data[i].biometric_data + '</td>' +
-                            '<td>' + data[i].exam_attendace + '</td>' +
-                            '</tr>'
-                        );
-                    }
-                }
-                else {
-                    $('#student_history_data').append(
-                        '<tr><td colspan="10">No data available</td></tr>'
-                    );
-                }
-            },
-            error: function () {
-                $('#student_history_data').empty();
-                $('#student_history_data').append(
-                    '<tr><td colspan="10">Error fetching data</td></tr>'
-                );
-            }
-        });
-    });
-
-
     // update_student_info
     $('#update_student_info').on('submit', function (e) {
         e.preventDefault();
@@ -558,6 +518,50 @@ $(document).ready(function(){
                     // console.error('Error submitting sign-out form:', error);
                 }
             });
+        });
+    });
+    
+
+    // examination_attendence_history
+    $('#get_programme_to_student').change(function (e) {
+        e.preventDefault();
+        var programme_to_student = $(this).val();
+        $.ajax({
+            url: '/eams/examination-attendence-history',
+            type: 'GET',
+            data: {get_programme_to_student: programme_to_student},
+            success: function (data) {
+                $('#student_history_data').empty();
+                console.log(data);
+                if (data.length > 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        $('#student_history_data').append(
+                            '<tr>' +
+                            '<td>' + (i + 1) + '</td>' +
+                            '<td>' + data[i].exam_attendace__type_of_exam + '</td>' +
+                            '<td>' + data[i].exam_attendace__exam_status + '</td>' +
+                            '<td>' + data[i].exam_attendace__programme__programme_abbrevation + '</td>' +
+                            '<td>' + data[i].booklet_number + '</td>' +
+                            '<td>' + data[i].signin_flag + '</td>' +
+                            '<td>' + data[i].signout_flag + '</td>' +
+                            '<td>' + data[i].biometric_data__student__reg_number + '</td>' +
+                            '<td>' + data[i].biometric_data__id + '</td>' +
+                            '</tr>'
+                        );
+                    }                    
+                }
+                else {
+                    $('#student_history_data').append(
+                        '<tr><td colspan="10">No data available</td></tr>'
+                    );
+                }
+            },
+            error: function () {
+                $('#student_history_data').empty();
+                $('#student_history_data').append(
+                    '<tr><td colspan="10">Error fetching data</td></tr>'
+                );
+            }
         });
     });
 });

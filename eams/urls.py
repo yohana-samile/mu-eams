@@ -36,7 +36,7 @@ urlpatterns = [
 
     # exam_attendance, payment
     path("exam_attendance", views.exam_attendance, name="exam_attendance"),
-    # path("exam_attendance_step_two", views.exam_attendance_step_two, name="exam_attendance_step_two"),
+    path("examination-attendence-history", views.examination_attendence_history, name="examination-attendence-history"),
     path("exam_attendance_step_two/", views.exam_attendance_step_two, name="exam_attendance_step_two"),
     path("submit_signin_student/", views.submit_signin_student, name="submit_signin_student"),
     path("submit_signout_student/", views.submit_signout_student, name="submit_signout_student"),

@@ -90,13 +90,7 @@
                         <span>Student Guide</span></a>
                 </li>
             {% elif user.is_staff == 1 %}
-                <!-- cv -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'student_cw' %}">
-                        <i class="fas fa-fw fa-book-open"></i>
-                        <span>Student Course Work</span></a>
-                </li>
-                
+
                 <!-- Examination -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExamination"
@@ -109,8 +103,16 @@
                         <div class="collapse-inner rounded" style="background-color: #002E3B;">
                             <a class="collapse-item text-white" href="{% url 'exam_attendance' %}">Examination Record</a>
                             <a class="collapse-item text-white" href="{% url 'exam_attendance_step_two' %}">Keep Attendance</a>
+                            <a class="collapse-item text-white" href="{% url 'examination-attendence-history' %}">Attendence History</a>
                         </div>
                     </div>
+                </li>
+
+                <!-- cv -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'student_cw' %}">
+                        <i class="fas fa-fw fa-book-open"></i>
+                        <span>Student Course Work</span></a>
                 </li>
 
                  <!-- USERS -->
